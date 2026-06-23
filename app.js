@@ -28,7 +28,7 @@ const DEFAULT_MOCK_USERS_DB = [
     password: "123456",
     points: 1240,
     accuracy: 68,
-    globalRank: 3,
+    globalRank: 6,
     levelTitle: "Nível 24 — Artilheiro",
     status: "approved",
     is_admin: 0,
@@ -72,8 +72,139 @@ const DEFAULT_MOCK_USERS_DB = [
     status: "pending",
     is_admin: 0,
     notificationsEnabled: true
+  },
+  {
+    id: "user_mariana_id",
+    name: "Mariana Costa",
+    email: "mariana@bolao.com",
+    password: "123456",
+    points: 1390,
+    accuracy: 64,
+    globalRank: 3,
+    levelTitle: "Nível 27 — Ponta-de-Lança",
+    status: "approved",
+    is_admin: 0,
+    notificationsEnabled: true
+  },
+  {
+    id: "user_carlos_id",
+    name: "Carlos Silva",
+    email: "carlos@bolao.com",
+    password: "123456",
+    points: 1100,
+    accuracy: 60,
+    globalRank: 7,
+    levelTitle: "Nível 20 — Camisa 10",
+    status: "approved",
+    is_admin: 0,
+    notificationsEnabled: true
+  },
+  {
+    id: "user_beatriz_id",
+    name: "Beatriz Souza",
+    email: "beatriz@bolao.com",
+    password: "123456",
+    points: 950,
+    accuracy: 56,
+    globalRank: 8,
+    levelTitle: "Nível 15 — Volante",
+    status: "approved",
+    is_admin: 0,
+    notificationsEnabled: true
+  },
+  {
+    id: "user_andre_id",
+    name: "André Santos",
+    email: "andre@bolao.com",
+    password: "123456",
+    points: 840,
+    accuracy: 52,
+    globalRank: 9,
+    levelTitle: "Nível 12 — Zagueiro",
+    status: "approved",
+    is_admin: 0,
+    notificationsEnabled: true
+  },
+  {
+    id: "user_fernanda_id",
+    name: "Fernanda Alves",
+    email: "fernanda@bolao.com",
+    password: "123456",
+    points: 0,
+    accuracy: 0,
+    globalRank: 999,
+    levelTitle: "Nível 1 — Estreante",
+    status: "pending",
+    is_admin: 0,
+    notificationsEnabled: true
+  },
+  {
+    id: "user_bruno_id",
+    name: "Bruno Oliveira",
+    email: "bruno@bolao.com",
+    password: "123456",
+    points: 720,
+    accuracy: 48,
+    globalRank: 10,
+    levelTitle: "Nível 10 — Lateral",
+    status: "approved",
+    is_admin: 0,
+    notificationsEnabled: true
+  },
+  {
+    id: "user_juliana_id",
+    name: "Juliana Rocha",
+    email: "juliana@bolao.com",
+    password: "123456",
+    points: 0,
+    accuracy: 0,
+    globalRank: 999,
+    levelTitle: "Nível 1 — Estreante",
+    status: "pending",
+    is_admin: 0,
+    notificationsEnabled: true
+  },
+  {
+    id: "user_gabriel_id",
+    name: "Gabriel Cruz",
+    email: "gabriel@bolao.com",
+    password: "123456",
+    points: 610,
+    accuracy: 44,
+    globalRank: 11,
+    levelTitle: "Nível 8 — Goleiro",
+    status: "approved",
+    is_admin: 0,
+    notificationsEnabled: true
+  },
+  {
+    id: "user_camila_id",
+    name: "Camila Ribeiro",
+    email: "camila@bolao.com",
+    password: "123456",
+    points: 530,
+    accuracy: 40,
+    globalRank: 12,
+    levelTitle: "Nível 5 — Estreante",
+    status: "approved",
+    is_admin: 0,
+    notificationsEnabled: true
+  },
+  {
+    id: "user_thiago_id",
+    name: "Thiago Lima",
+    email: "thiago@bolao.com",
+    password: "123456",
+    points: 0,
+    accuracy: 0,
+    globalRank: 999,
+    levelTitle: "Nível 1 — Estreante",
+    status: "pending",
+    is_admin: 0,
+    notificationsEnabled: true
   }
 ];
+
 
 // --- INITIAL STATE ---
 const DEFAULT_STATE = {

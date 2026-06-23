@@ -55,7 +55,18 @@ INSERT OR IGNORE INTO matches (id, home_team, home_abbrev, home_flag, away_team,
 -- Seed Default Admin and User
 INSERT OR IGNORE INTO users (id, name, email, password_hash, points, accuracy, global_rank, level_title, status, is_admin) VALUES
 ('admin_id', 'Administrador', 'admin@bolao.com', 'admin123', 0, 0, 999, 'Nível 100 — Organizador', 'approved', 1),
-('pedro_mock_id', 'Pedro Alcântara', 'pedro@bolao.com', '123456', 1240, 68, 42, 'Nível 24 — Artilheiro', 'approved', 0),
+('pedro_mock_id', 'Pedro Alcântara', 'pedro@bolao.com', '123456', 1240, 68, 6, 'Nível 24 — Artilheiro', 'approved', 0),
 ('user_ana_id', 'Ana Cláudia', 'ana@bolao.com', '123456', 1520, 68, 2, 'Nível 30 — Veterana', 'approved', 0),
 ('user_rodrigo_id', 'Rodrigo', 'rodrigo@bolao.com', '123456', 1580, 72, 1, 'Nível 35 — Mestre', 'approved', 0),
-('user_lucas_id', 'Lucas Lima', 'lucas@bolao.com', '123456', 0, 0, 999, 'Nível 1 — Estreante', 'pending', 0);
+('user_lucas_id', 'Lucas Lima', 'lucas@bolao.com', '123456', 0, 0, 999, 'Nível 1 — Estreante', 'pending', 0),
+('user_mariana_id', 'Mariana Costa', 'mariana@bolao.com', '123456', 1390, 64, 3, 'Nível 27 — Ponta-de-Lança', 'approved', 0),
+('user_carlos_id', 'Carlos Silva', 'carlos@bolao.com', '123456', 1100, 60, 7, 'Nível 20 — Camisa 10', 'approved', 0),
+('user_beatriz_id', 'Beatriz Souza', 'beatriz@bolao.com', '123456', 950, 56, 8, 'Nível 15 — Volante', 'approved', 0),
+('user_andre_id', 'André Santos', 'andre@bolao.com', '123456', 840, 52, 9, 'Nível 12 — Zagueiro', 'approved', 0),
+('user_fernanda_id', 'Fernanda Alves', 'fernanda@bolao.com', '123456', 0, 0, 999, 'Nível 1 — Estreante', 'pending', 0),
+('user_bruno_id', 'Bruno Oliveira', 'bruno@bolao.com', '123456', 720, 48, 10, 'Nível 10 — Lateral', 'approved', 0),
+('user_juliana_id', 'Juliana Rocha', 'juliana@bolao.com', '123456', 0, 0, 999, 'Nível 1 — Estreante', 'pending', 0),
+('user_gabriel_id', 'Gabriel Cruz', 'gabriel@bolao.com', '123456', 610, 44, 11, 'Nível 8 — Goleiro', 'approved', 0),
+('user_camila_id', 'Camila Ribeiro', 'camila@bolao.com', '123456', 530, 40, 12, 'Nível 5 — Estreante', 'approved', 0),
+('user_thiago_id', 'Thiago Lima', 'thiago@bolao.com', '123456', 0, 0, 999, 'Nível 1 — Estreante', 'pending', 0);
+

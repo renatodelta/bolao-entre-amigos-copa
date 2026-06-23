@@ -1,0 +1,69 @@
+body {
+    background-color: #111413;
+    color: #e1e3e1;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none; /* Make it feel like an app */
+}
+
+/* Glassmorphism effects */
+.glass-card {
+    background: rgba(29, 32, 31, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stadium-gradient {
+    background: radial-gradient(circle at top right, #0f2e23 0%, #111413 100%);
+    background-attachment: fixed;
+}
+
+/* Match card interaction */
+.match-card-glow {
+    background: linear-gradient(145deg, rgba(29, 32, 31, 1) 0%, rgba(17, 20, 19, 1) 100%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.match-card-glow:focus-within {
+    border-color: #2ff801;
+    box-shadow: 0 0 15px rgba(47, 248, 1, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Number inputs without arrows */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Nav Active State */
+.nav-btn {
+    color: #c1c8c3;
+}
+.nav-btn.active {
+    background-color: #2ff801;
+    color: #0f6d00;
+    border-radius: 9999px;
+}
+.nav-btn.active .material-symbols-outlined {
+    font-variation-settings: 'FILL' 1;
+}
+
+/* Safe Area for iOS/Modern Phones */
+.safe-area-padding {
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+}

@@ -1,13 +1,398 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bolao-entre-amigos</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+    <meta name="theme-color" content="#111413"/>
+    <title>Bolão Copa 2026</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="public/icons.svg">
+    
+    <!-- Tailwind CSS (CDN as requested) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Anybody:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary": "#d7ffc5",
+                        "surface-bright": "#373a39",
+                        "on-tertiary-fixed": "#221b00",
+                        "surface-container-lowest": "#0c0f0e",
+                        "on-secondary-fixed-variant": "#095300",
+                        "on-secondary-fixed": "#022100",
+                        "secondary-fixed": "#79ff5b",
+                        "outline": "#8b928e",
+                        "tertiary-container": "#c9a900",
+                        "on-tertiary-fixed-variant": "#544600",
+                        "outline-variant": "#414844",
+                        "inverse-surface": "#e1e3e1",
+                        "surface-container": "#1d201f",
+                        "secondary-container": "#2ff801",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "on-background": "#e1e3e1",
+                        "on-error-container": "#ffdad6",
+                        "on-error": "#690005",
+                        "inverse-on-surface": "#2e3130",
+                        "on-primary-fixed": "#012016",
+                        "error": "#ffb4ab",
+                        "on-tertiary-container": "#4c3f00",
+                        "background": "#111413",
+                        "on-surface": "#e1e3e1",
+                        "on-primary-container": "#779788",
+                        "surface": "#111413",
+                        "on-surface-variant": "#c1c8c3",
+                        "primary-container": "#0f2e23",
+                        "on-primary-fixed-variant": "#2e4d40",
+                        "primary-fixed-dim": "#accebe",
+                        "on-secondary": "#053900",
+                        "on-primary": "#18362b",
+                        "inverse-primary": "#466557",
+                        "primary": "#accebe",
+                        "surface-dim": "#111413",
+                        "tertiary-fixed": "#ffe16d",
+                        "error-container": "#93000a",
+                        "surface-variant": "#323534",
+                        "primary-fixed": "#c8ead9",
+                        "surface-container-low": "#191c1b",
+                        "surface-tint": "#accebe",
+                        "on-secondary-container": "#0f6d00",
+                        "surface-container-high": "#282b29",
+                        "secondary-fixed-dim": "#2ae500",
+                        "on-tertiary": "#3a3000",
+                        "surface-container-highest": "#323534",
+                        "tertiary": "#e9c400"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    spacing: {
+                        "gutter": "16px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px",
+                        "base": "4px",
+                        "container-max": "1200px"
+                    },
+                    fontFamily: {
+                        "headline-lg-mobile": ["Anybody"],
+                        "label-md": ["JetBrains Mono"],
+                        "label-sm": ["JetBrains Mono"],
+                        "display-lg": ["Anybody"],
+                        "headline-md": ["Anybody"],
+                        "headline-lg": ["Anybody"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"]
+                    },
+                    fontSize: {
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body-md text-body-md stadium-gradient min-h-screen pb-24">
+    <!-- TopAppBar -->
+    <header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md shadow-sm border-b border-white/10 flex justify-between items-center px-margin-mobile h-16">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border border-primary/20">
+                <span class="material-symbols-outlined text-primary" style="font-size: 28px;">person</span>
+            </div>
+            <h1 class="font-headline-md text-headline-md font-bold text-primary">Bolão Copa 2026</h1>
+        </div>
+        <div class="flex items-center gap-2 bg-primary-container px-3 py-1.5 rounded-full border border-primary/10">
+            <span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">stars</span>
+            <span class="font-label-md text-label-md text-primary" id="userPoints">1,250 pts</span>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="app-content" class="pt-24 px-margin-mobile max-w-container-max mx-auto space-y-8">
+        <!-- Content will be injected here by app.js -->
+    </main>
+
+    <!-- BottomNavBar -->
+    <nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 pb-safe pt-2 bg-surface-container-low z-50 shadow-[0_-4px_12px_rgba(0,0,0,0.3)] border-t border-white/5 safe-area-padding">
+        <button class="nav-btn active flex flex-col items-center justify-center px-4 py-1 transition-all duration-150 active:scale-95" data-target="home">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+            <span class="font-label-sm text-label-sm">Início</span>
+        </button>
+        <button class="nav-btn flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-bright/10 px-4 py-1 rounded-full transition-all duration-150 active:scale-95" data-target="palpites">
+            <span class="material-symbols-outlined">sports_soccer</span>
+            <span class="font-label-sm text-label-sm">Palpites</span>
+        </button>
+        <button class="nav-btn flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-bright/10 px-4 py-1 rounded-full transition-all duration-150 active:scale-95" data-target="ranking">
+            <span class="material-symbols-outlined">leaderboard</span>
+            <span class="font-label-sm text-label-sm">Ranking</span>
+        </button>
+        <button class="nav-btn flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-bright/10 px-4 py-1 rounded-full transition-all duration-150 active:scale-95" data-target="regras">
+            <span class="material-symbols-outlined">gavel</span>
+            <span class="font-label-sm text-label-sm">Regras</span>
+        </button>
+    </nav>
+
+    <!-- Templates -->
+    <template id="tpl-home">
+        <section class="relative overflow-hidden rounded-xl glass-card p-6 border-l-4 border-secondary-container fade-in">
+            <div class="absolute top-0 right-0 p-4 opacity-10">
+                <span class="material-symbols-outlined text-8xl" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+            </div>
+            <div class="relative z-10 flex flex-col gap-4">
+                <div>
+                    <p class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">Oitavas de Final - Copa 2026</p>
+                    <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-white">Sua Posição: 4º lugar</h2>
+                </div>
+                <div class="flex items-end justify-between">
+                    <div>
+                        <p class="text-on-surface-variant font-label-sm text-label-sm">Pontuação Acumulada</p>
+                        <p class="font-display-lg text-display-lg text-secondary-fixed">1,250 <span class="text-headline-md font-headline-md">pts</span></p>
+                    </div>
+                    <div class="bg-surface-bright/30 p-2 rounded-lg flex items-center gap-2">
+                        <span class="material-symbols-outlined text-secondary-container">trending_up</span>
+                        <span class="text-secondary-container font-bold">+2 posições</span>
+                    </div>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-full h-2 bg-surface-variant rounded-full mt-2 overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-primary to-secondary-container w-[75%] rounded-full shadow-[0_0_8px_rgba(47,248,1,0.5)]"></div>
+                </div>
+                <p class="text-on-surface-variant font-label-sm text-label-sm">8 de 16 palpites realizados</p>
+            </div>
+        </section>
+
+        <section class="space-y-4 fade-in">
+            <div class="flex justify-between items-center">
+                <h3 class="font-headline-md text-headline-md text-primary">Próximos Jogos</h3>
+                <button class="text-secondary-fixed font-label-md text-label-md hover:underline flex items-center gap-1" onclick="navigateTo('palpites')">
+                    Ver todos <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="glass-card rounded-xl p-4 match-card-glow transition-all duration-200">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-on-surface-variant font-label-sm text-label-sm">Sáb, 16:00</span>
+                        <span class="bg-tertiary-container/20 text-tertiary px-2 py-0.5 rounded text-[10px] font-bold uppercase">Multiplicador 2x</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="flex flex-col items-center gap-2 flex-1">
+                            <div class="w-12 h-12 rounded-full bg-surface flex items-center justify-center border border-white/10 text-xl">🇧🇷</div>
+                            <span class="font-bold text-center leading-tight">Brasil</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="number" class="w-12 h-14 bg-surface-container-high border border-outline-variant rounded-lg text-center font-label-md text-headline-md focus:ring-2 focus:ring-secondary-container outline-none" placeholder="-">
+                            <span class="text-on-surface-variant font-bold">x</span>
+                            <input type="number" class="w-12 h-14 bg-surface-container-high border border-outline-variant rounded-lg text-center font-label-md text-headline-md focus:ring-2 focus:ring-secondary-container outline-none" placeholder="-">
+                        </div>
+                        <div class="flex flex-col items-center gap-2 flex-1">
+                            <div class="w-12 h-12 rounded-full bg-surface flex items-center justify-center border border-white/10 text-xl">🇫🇷</div>
+                            <span class="font-bold text-center leading-tight">França</span>
+                        </div>
+                    </div>
+                    <button class="w-full mt-4 bg-secondary-container text-on-secondary-container font-bold py-2 rounded-lg active:scale-95 transition-transform" onclick="alert('Palpite salvo!')">Salvar Rápido</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="space-y-4 fade-in pb-8">
+            <h3 class="font-headline-md text-headline-md text-primary">Resultados Recentes</h3>
+            <div class="bg-surface-container-high/50 rounded-xl overflow-hidden border border-white/5">
+                <div class="flex items-center justify-between p-4 border-b border-white/5 bg-surface-container-highest">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-secondary-container">check_circle</span>
+                        <span class="font-bold">Na mosca! (Placar exato)</span>
+                    </div>
+                    <span class="font-label-md text-label-md text-secondary-fixed">+25 pts</span>
+                </div>
+                <div class="p-4 flex items-center justify-between">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold">Espanha</span>
+                            <span class="text-primary font-headline-md">3 - 1</span>
+                            <span class="font-bold">Croácia</span>
+                        </div>
+                        <p class="text-on-surface-variant text-sm">Seu palpite: <span class="font-label-sm">3 - 1</span></p>
+                    </div>
+                    <div class="w-10 h-10 rounded bg-secondary-container/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-secondary-container">celebration</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <template id="tpl-palpites">
+        <div class="mb-6 fade-in">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Palpites: Oitavas</h2>
+                    <p class="text-on-surface-variant font-body-md mt-1">Copa do Mundo 2026</p>
+                </div>
+                <div class="flex flex-col items-end">
+                    <span class="text-label-sm font-label-sm text-secondary-container">PROGRESSO</span>
+                    <div class="w-24 h-1.5 bg-surface-variant rounded-full mt-1 overflow-hidden">
+                        <div class="w-2/8 h-full bg-gradient-to-r from-secondary-container to-secondary-fixed-dim"></div>
+                    </div>
+                    <span class="text-[10px] mt-1 font-label-sm text-on-surface-variant">2 / 8 JOGOS</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-20 fade-in" id="matches-container">
+            <!-- Inject matches via JS -->
+        </div>
+
+        <button class="fixed bottom-24 right-6 w-14 h-14 bg-tertiary text-on-tertiary-fixed rounded-full shadow-lg flex items-center justify-center z-40 active:scale-90 transition-transform" onclick="alert('Todos os palpites salvos!')">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+        </button>
+    </template>
+
+    <template id="tpl-ranking">
+        <div class="mb-8 mt-2 fade-in text-center">
+            <span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest">COPA DO MUNDO 2026</span>
+            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-white mt-2">Ranking Global</h2>
+            <p class="text-on-surface-variant font-body-md mt-1 opacity-80">Acompanhe quem está no topo.</p>
+        </div>
+
+        <!-- Podium -->
+        <div class="flex justify-center items-end gap-2 mb-8 fade-in">
+            <!-- 2nd -->
+            <div class="flex flex-col items-center">
+                <div class="w-14 h-14 rounded-lg bg-surface border-2 border-outline-variant overflow-hidden mb-2">
+                    <img src="https://i.pravatar.cc/150?img=1" class="w-full h-full object-cover">
+                </div>
+                <span class="font-label-sm text-xs bg-surface-variant px-2 rounded-full mb-1">2º</span>
+                <span class="text-white font-bold text-sm">Mariana R.</span>
+                <span class="text-secondary-fixed text-xs font-bold">2.450 pts</span>
+                <div class="w-16 h-16 bg-surface-container-high rounded-t-lg mt-2"></div>
+            </div>
+            <!-- 1st -->
+            <div class="flex flex-col items-center relative z-10">
+                <span class="material-symbols-outlined text-tertiary absolute -top-6 text-3xl">workspace_premium</span>
+                <div class="w-20 h-20 rounded-lg bg-surface border-2 border-tertiary overflow-hidden mb-2 shadow-[0_0_15px_rgba(233,196,0,0.3)]">
+                    <img src="https://i.pravatar.cc/150?img=11" class="w-full h-full object-cover">
+                </div>
+                <span class="font-label-sm text-xs bg-tertiary text-on-tertiary px-2 rounded-full mb-1">1º</span>
+                <span class="text-white font-bold">Thiago Lima</span>
+                <span class="text-tertiary text-sm font-bold">2.850 pts</span>
+                <div class="w-20 h-24 bg-surface-container-highest rounded-t-lg mt-2 border-t border-tertiary/30"></div>
+            </div>
+            <!-- 3rd -->
+            <div class="flex flex-col items-center">
+                <div class="w-14 h-14 rounded-lg bg-surface border-2 border-outline-variant overflow-hidden mb-2">
+                    <img src="https://i.pravatar.cc/150?img=12" class="w-full h-full object-cover">
+                </div>
+                <span class="font-label-sm text-xs bg-surface-variant px-2 rounded-full mb-1">3º</span>
+                <span class="text-white font-bold text-sm">Carlos M.</span>
+                <span class="text-secondary-fixed text-xs font-bold">2.180 pts</span>
+                <div class="w-16 h-12 bg-surface-container rounded-t-lg mt-2"></div>
+            </div>
+        </div>
+
+        <!-- List -->
+        <div class="glass-card rounded-xl overflow-hidden fade-in mb-8">
+            <table class="w-full text-left">
+                <thead class="bg-surface-container/50">
+                    <tr class="text-on-surface-variant text-xs uppercase tracking-wider">
+                        <th class="px-4 py-3">Pos</th>
+                        <th class="px-4 py-3">Participante</th>
+                        <th class="px-4 py-3 text-right">Pontos</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm">
+                    <tr class="border-b border-white/5">
+                        <td class="px-4 py-3 text-on-surface-variant">4º</td>
+                        <td class="px-4 py-3 font-bold flex items-center gap-2">
+                            <img src="https://i.pravatar.cc/150?img=5" class="w-6 h-6 rounded-full">
+                            Beatriz Oliveira
+                        </td>
+                        <td class="px-4 py-3 text-right">1.950</td>
+                    </tr>
+                    <tr class="bg-primary-container/20 border-b border-primary/20">
+                        <td class="px-4 py-3 font-bold text-primary">5º</td>
+                        <td class="px-4 py-3 font-bold flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary text-sm">person</span>
+                            Você (João)
+                        </td>
+                        <td class="px-4 py-3 text-right text-secondary-fixed font-bold">1.250</td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-3 text-on-surface-variant">6º</td>
+                        <td class="px-4 py-3 font-bold flex items-center gap-2">
+                            <img src="https://i.pravatar.cc/150?img=7" class="w-6 h-6 rounded-full">
+                            Felipe Mendes
+                        </td>
+                        <td class="px-4 py-3 text-right">1.100</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </template>
+
+    <template id="tpl-regras">
+        <div class="mb-8 fade-in">
+            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-secondary-fixed mb-2">Regras de Pontuação</h2>
+            <p class="text-on-surface-variant font-body-md opacity-80">Estas regras são válidas para todos os confrontos da Copa do Mundo.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 gap-4 mb-10 fade-in">
+            <div class="glass-card rounded-xl p-6 border-secondary-fixed/30 relative overflow-hidden group shadow-[0_0_15px_rgba(121,255,91,0.1)]">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="bg-secondary-container text-on-secondary-container font-headline-md text-headline-md px-4 py-1 rounded-lg">10 pts</div>
+                    <span class="material-symbols-outlined text-secondary-fixed">workspace_premium</span>
+                </div>
+                <h3 class="font-headline-md text-headline-md text-white mb-2">Placar Exato</h3>
+                <p class="text-on-surface-variant mb-6">A pontuação máxima! Você acertou precisamente o número de gols de ambas as seleções.</p>
+            </div>
+            
+            <div class="glass-card rounded-xl p-6 border-white/10">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="bg-primary-container text-primary font-headline-md text-headline-md px-3 py-1 rounded-lg">7 pts</div>
+                    <span class="material-symbols-outlined text-primary-fixed-dim">sports_soccer</span>
+                </div>
+                <h3 class="font-headline-md text-headline-md text-white mb-2">Vencedor + Saldo</h3>
+                <p class="text-on-surface-variant text-sm">Acertou a seleção vencedora e a diferença de gols, mas errou o placar exato.</p>
+            </div>
+            
+            <div class="glass-card rounded-xl p-5 border-white/5">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center font-bold text-tertiary">5</div>
+                    <h4 class="font-headline-md text-headline-md text-white text-lg">Vencedor/Empate</h4>
+                </div>
+                <p class="text-on-surface-variant text-sm">Acertou quem ganhou ou se deu empate.</p>
+            </div>
+            
+            <div class="glass-card rounded-xl p-5 border-white/5">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center font-bold text-primary-fixed-dim">2</div>
+                    <h4 class="font-headline-md text-headline-md text-white text-lg">Gols de uma Seleção</h4>
+                </div>
+                <p class="text-on-surface-variant text-sm">Acertou apenas os gols de um dos lados.</p>
+            </div>
+        </div>
+    </template>
+
+    <script src="app.js"></script>
+</body>
 </html>

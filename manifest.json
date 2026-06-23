@@ -1,0 +1,17 @@
+{
+  "name": "Bolão Copa 2026",
+  "short_name": "Bolão 2026",
+  "description": "Aplicativo de palpites para a Copa do Mundo 2026",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#111413",
+  "theme_color": "#111413",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/2026_FIFA_World_Cup_logo.svg/512px-2026_FIFA_World_Cup_logo.svg.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -3,7 +3,9 @@
    ========================================================================== */
 
 // --- DUAL MODE CONFIGURATION ---
-const API_BASE_URL = "http://localhost:8787"; 
+const API_BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://localhost:8787"
+  : "https://bolao-api.dominguesrds29-code.workers.dev"; // Substitua pelo URL real do seu Worker após deploy 
 let isApiActive = false; // Toggled dynamically on initial connection check
 
 // Mock database inside LocalStorage for fallback testing

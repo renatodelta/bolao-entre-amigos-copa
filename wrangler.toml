@@ -1,0 +1,13 @@
+name = "bolao-api"
+main = "server.js"
+compatibility_date = "2026-06-23"
+
+# Cloudflare D1 Database Binding
+[[d1_databases]]
+binding = "DB" # Available inside worker as c.env.DB
+database_name = "bolao_d1"
+database_id = "your-d1-database-uuid-here" # Replace with real uuid after creating it via: wrangler d1 create bolao_d1
+migrations_dir = "./"
+
+[triggers]
+crons = ["*/10 * * * *"] # Executes every 10 minutes to verify predictions

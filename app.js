@@ -1073,6 +1073,39 @@ function simulateLiveMatchTick() {
   }
 }
 
+// --- TAB NAVIGATION SYSTEM ---
+function switchTab(tabId) {
+  // Hide all panels
+  viewPanels.forEach(panel => {
+    panel.classList.remove("active");
+  });
+  
+  // Show target panel
+  const targetPanel = document.getElementById(tabId);
+  if (targetPanel) {
+    targetPanel.classList.add("active");
+  }
+  
+  // Update nav tabs active styling
+  navTabs.forEach(tab => {
+    if (tab.dataset.target === tabId) {
+      tab.classList.add("active");
+    } else {
+      tab.classList.remove("active");
+    }
+  });
+
+  // Dynamically refresh tab content if needed
+  if (tabId === "view-palpites") {
+    const activeFilter = document.querySelector(".filter-tab.active")?.dataset.filter || "all";
+    renderMatchesList(activeFilter);
+  } else if (tabId === "view-ranking") {
+    renderLeaderboard("global");
+  } else if (tabId === "view-perfil") {
+    updateProfileUI();
+  }
+}
+
 // --- INITIALIZE LISTENERS ---
 function initEventListeners() {
   // Auth Form Switching

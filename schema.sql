@@ -1,4 +1,4 @@
--- SQL Schema for Bolão Copa 2026
+-- SQL Schema for Bolão Copa 2026 (Admin Approval System)
 
 -- Users Table
 CREATE TABLE IF NOT EXISTS users (
@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
   accuracy INTEGER DEFAULT 0,
   global_rank INTEGER DEFAULT 9999,
   level_title TEXT DEFAULT 'Nível 1 — Estreante',
+  status TEXT DEFAULT 'pending', -- pending, approved
+  is_admin INTEGER DEFAULT 0, -- 0 = regular, 1 = admin
   notifications_enabled INTEGER DEFAULT 1,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
@@ -43,29 +45,17 @@ CREATE TABLE IF NOT EXISTS predictions (
   FOREIGN KEY (match_id) REFERENCES matches(id) ON DELETE CASCADE
 );
 
--- Groups Table
-CREATE TABLE IF NOT EXISTS groups (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  invite_code TEXT UNIQUE NOT NULL,
-  created_by TEXT NOT NULL,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (created_by) REFERENCES users(id)
-);
-
--- Group Members Table
-CREATE TABLE IF NOT EXISTS group_members (
-  group_id TEXT NOT NULL,
-  user_id TEXT NOT NULL,
-  joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (group_id, user_id),
-  FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
 -- Seed Initial Matches
 INSERT OR IGNORE INTO matches (id, home_team, home_abbrev, home_flag, away_team, away_abbrev, away_flag, status, time, start_time, home_score, away_score, email_sent) VALUES
 ('m1', 'Brasil', 'BRA', '🇧🇷', 'EUA', 'USA', '🇺🇸', 'live', '15 JUN • 21:00', datetime('now', '-1 hour'), 1, 0, 1),
 ('m2', 'Argentina', 'ARG', '🇦🇷', 'França', 'FRA', '🇫🇷', 'upcoming', '16 JUN • 16:00', datetime('now', '+1 hour'), null, null, 0),
 ('m3', 'Alemanha', 'GER', '🇩🇪', 'Espanha', 'ESP', '🇪🇸', 'upcoming', '17 JUN • 19:00', datetime('now', '+24 hours'), null, null, 0),
 ('m4', 'Itália', 'ITA', '🇮🇹', 'Inglaterra', 'ENG', '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'completed', '14 JUN • Finalizado', datetime('now', '-48 hours'), 2, 1, 1);
+
+-- Seed Default Admin and User
+INSERT OR IGNORE INTO users (id, name, email, password_hash, points, accuracy, global_rank, level_title, status, is_admin) VALUES
+('admin_id', 'Administrador', 'admin@bolao.com', 'admin123', 0, 0, 999, 'Nível 100 — Organizador', 'approved', 1),
+('pedro_mock_id', 'Pedro Alcântara', 'pedro@bolao.com', '123456', 1240, 68, 42, 'Nível 24 — Artilheiro', 'approved', 0),
+('user_ana_id', 'Ana Cláudia', 'ana@bolao.com', '123456', 1520, 68, 2, 'Nível 30 — Veterana', 'approved', 0),
+('user_rodrigo_id', 'Rodrigo', 'rodrigo@bolao.com', '123456', 1580, 72, 1, 'Nível 35 — Mestre', 'approved', 0),
+('user_lucas_id', 'Lucas Lima', 'lucas@bolao.com', '123456', 0, 0, 999, 'Nível 1 — Estreante', 'pending', 0);

@@ -50,23 +50,25 @@ app.post('/api/auth/register', async (c) => {
 
     const db = c.env?.DB;
     if (!db) {
+      // Standalone sandbox mock registration
       return c.json({
         message: 'Mock register success (Standalone Mode)',
-        token: 'mock-jwt-token-12345',
-        user: { id: 'mock_u1', name, email, points: 0, accuracy: 0 }
+        token: 'mock-jwt-token-newuser',
+        user: { id: 'mock_newuser', name, email, points: 0, accuracy: 0, status: 'pending', is_admin: 0 }
       });
     }
 
     const userId = generateId();
+    // Insert user with status = 'pending' and is_admin = 0
     await db.prepare(
-      'INSERT INTO users (id, name, email, password_hash, points, accuracy, global_rank) VALUES (?, ?, ?, ?, 0, 0, 9999)'
+      "INSERT INTO users (id, name, email, password_hash, points, accuracy, global_rank, status, is_admin) VALUES (?, ?, ?, ?, 0, 0, 9999, 'pending', 0)"
     ).bind(userId, name, email, password).run();
 
     const token = await sign({ sub: userId, exp: Math.floor(Date.now() / 1000) + (3600 * 24 * 7) }, JWT_SECRET);
 
     return c.json({
       token,
-      user: { id: userId, name, email, points: 0, accuracy: 0 }
+      user: { id: userId, name, email, points: 0, accuracy: 0, status: 'pending', is_admin: 0 }
     });
   } catch (err) {
     return c.json({ error: err.message || 'Erro ao registrar usuário' }, 500);
@@ -83,17 +85,24 @@ app.post('/api/auth/login', async (c) => {
 
     const db = c.env?.DB;
     if (!db) {
+      // Local fallback Mock logins
+      if (email === 'admin@bolao.com' && password === 'admin123') {
+        return c.json({
+          token: 'mock-jwt-token-admin',
+          user: { id: 'admin_id', name: 'Administrador', email, points: 0, accuracy: 0, status: 'approved', is_admin: 1 }
+        });
+      }
       if (email === 'pedro@bolao.com' && password === '123456') {
         return c.json({
-          token: 'mock-jwt-token-12345',
-          user: { id: 'pedro_mock_id', name: 'Pedro Alcântara', email, points: 1240, accuracy: 68 }
+          token: 'mock-jwt-token-pedro',
+          user: { id: 'pedro_mock_id', name: 'Pedro Alcântara', email, points: 1240, accuracy: 68, status: 'approved', is_admin: 0 }
         });
       }
       return c.json({ error: 'Credenciais inválidas no modo Mock' }, 401);
     }
 
     const user = await db.prepare(
-      'SELECT id, name, email, password_hash, points, accuracy, global_rank, level_title, notifications_enabled FROM users WHERE email = ?'
+      'SELECT id, name, email, password_hash, points, accuracy, global_rank, level_title, status, is_admin, notifications_enabled FROM users WHERE email = ?'
     ).bind(email).first();
 
     if (!user || user.password_hash !== password) {
@@ -112,6 +121,8 @@ app.post('/api/auth/login', async (c) => {
         accuracy: user.accuracy,
         global_rank: user.global_rank,
         level_title: user.level_title,
+        status: user.status,
+        is_admin: user.is_admin,
         notifications_enabled: user.notifications_enabled
       }
     });
@@ -124,7 +135,6 @@ app.post('/api/auth/login', async (c) => {
 app.get('/api/matches', async (c) => {
   const db = c.env?.DB;
   if (!db) {
-    // Return mock static matches
     return c.json([
       { id: "m1", homeTeam: "Brasil", homeAbbrev: "BRA", homeFlag: "🇧🇷", awayTeam: "EUA", awayAbbrev: "USA", awayFlag: "🇺🇸", status: "live", time: "15 JUN • 21:00", homeScore: 1, awayScore: 0, realTimeMinute: 62 },
       { id: "m2", homeTeam: "Argentina", homeAbbrev: "ARG", homeFlag: "🇦🇷", awayTeam: "França", awayAbbrev: "FRA", awayFlag: "🇫🇷", status: "upcoming", time: "16 JUN • 16:00", homeScore: null, awayScore: null },
@@ -140,7 +150,7 @@ app.get('/api/matches', async (c) => {
   }
 });
 
-// --- PROTECTED ENDPOINTS ---
+// --- PROTECTED USER ENDPOINTS ---
 
 // 3. PROFILE DATA
 app.get('/api/protected/me', async (c) => {
@@ -150,37 +160,22 @@ app.get('/api/protected/me', async (c) => {
   if (!db) {
     return c.json({
       id: userId,
-      name: "Pedro Alcântara",
-      email: "pedro@bolao.com",
-      points: 1240,
-      accuracy: 68,
-      globalRank: 42,
-      levelTitle: "Nível 24 — Artilheiro",
-      groups: [
-        { id: "g1", name: "Firma & Breja", rank: 4, total: 12 },
-        { id: "g2", name: "Família Silva", rank: 1, total: 6 }
-      ]
+      name: userId === 'admin_id' ? 'Administrador' : 'Pedro Alcântara',
+      email: userId === 'admin_id' ? 'admin@bolao.com' : 'pedro@bolao.com',
+      points: userId === 'admin_id' ? 0 : 1240,
+      accuracy: userId === 'admin_id' ? 0 : 68,
+      globalRank: userId === 'admin_id' ? 999 : 42,
+      levelTitle: userId === 'admin_id' ? "Nível 100 — Organizador" : "Nível 24 — Artilheiro",
+      status: userId === 'admin_id' ? 'approved' : 'approved',
+      is_admin: userId === 'admin_id' ? 1 : 0
     });
   }
 
   try {
-    const user = await db.prepare('SELECT * FROM users WHERE id = ?').bind(userId).first();
+    const user = await db.prepare('SELECT id, name, email, points, accuracy, global_rank, level_title, status, is_admin, notifications_enabled FROM users WHERE id = ?').bind(userId).first();
     if (!user) return c.json({ error: 'Usuário não encontrado' }, 404);
 
-    const { results: groups } = await db.prepare(
-      `SELECT g.id, g.name, 
-      (SELECT COUNT(*)+1 FROM users u2 WHERE u2.points > u.points) as rank,
-      (SELECT COUNT(*) FROM group_members gm2 WHERE gm2.group_id = g.id) as total
-      FROM groups g
-      JOIN group_members gm ON g.id = gm.group_id
-      JOIN users u ON u.id = ?
-      WHERE gm.user_id = ?`
-    ).bind(userId, userId).all();
-
-    return c.json({
-      ...user,
-      groups
-    });
+    return c.json(user);
   } catch (err) {
     return c.json({ error: err.message }, 500);
   }
@@ -197,6 +192,12 @@ app.post('/api/protected/predictions', async (c) => {
   }
 
   try {
+    // Check if user status is approved
+    const user = await db.prepare('SELECT status FROM users WHERE id = ?').bind(userId).first();
+    if (!user || user.status !== 'approved') {
+      return c.json({ error: 'Sua conta ainda não foi liberada pelo administrador.' }, 403);
+    }
+
     await db.prepare(
       `INSERT INTO predictions (user_id, match_id, home_score, away_score, updated_at) 
        VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
@@ -212,58 +213,8 @@ app.post('/api/protected/predictions', async (c) => {
   }
 });
 
-// 5. CREATE GROUP
-app.post('/api/protected/groups/create', async (c) => {
-  const userId = c.get('userId');
-  const { name } = await c.req.json();
-  const db = c.env?.DB;
-
-  if (!db) {
-    return c.json({ success: true, groupId: 'mock-g-' + Date.now(), inviteCode: 'MOCK123' });
-  }
-
-  try {
-    const groupId = generateId();
-    const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-
-    await db.batch([
-      db.prepare('INSERT INTO groups (id, name, invite_code, created_by) VALUES (?, ?, ?, ?)').bind(groupId, name, inviteCode, userId),
-      db.prepare('INSERT INTO group_members (group_id, user_id) VALUES (?, ?)').bind(groupId, userId)
-    ]);
-
-    return c.json({ success: true, groupId, inviteCode });
-  } catch (err) {
-    return c.json({ error: err.message }, 500);
-  }
-});
-
-// 6. JOIN GROUP
-app.post('/api/protected/groups/join', async (c) => {
-  const userId = c.get('userId');
-  const { inviteCode } = await c.req.json();
-  const db = c.env?.DB;
-
-  if (!db) {
-    return c.json({ success: true, groupName: 'Grupo Mock Amigo' });
-  }
-
-  try {
-    const group = await db.prepare('SELECT id, name FROM groups WHERE invite_code = ?').bind(inviteCode).first();
-    if (!group) {
-      return c.json({ error: 'Código de convite não encontrado' }, 404);
-    }
-
-    await db.prepare('INSERT OR IGNORE INTO group_members (group_id, user_id) VALUES (?, ?)').bind(group.id, userId).run();
-
-    return c.json({ success: true, groupName: group.name });
-  } catch (err) {
-    return c.json({ error: err.message }, 500);
-  }
-});
-
-// 7. GET LEADERBOARD
+// 5. GET LEADERBOARD (Only Global Group remains)
 app.get('/api/protected/rankings/:groupId', async (c) => {
-  const groupId = c.req.param('groupId');
   const db = c.env?.DB;
 
   if (!db) {
@@ -271,24 +222,57 @@ app.get('/api/protected/rankings/:groupId', async (c) => {
   }
 
   try {
-    let query = '';
-    let binding = [];
+    const { results } = await db.prepare('SELECT name, points, accuracy, id FROM users WHERE status = \'approved\' ORDER BY points DESC LIMIT 100').all();
+    return c.json(results);
+  } catch (err) {
+    return c.json({ error: err.message }, 500);
+  }
+});
 
-    if (groupId === 'global') {
-      query = 'SELECT name, points, accuracy, id FROM users ORDER BY points DESC LIMIT 100';
-    } else {
-      query = `
-        SELECT u.name, u.points, u.accuracy, u.id 
-        FROM users u
-        JOIN group_members gm ON u.id = gm.user_id
-        WHERE gm.group_id = ?
-        ORDER BY u.points DESC
-      `;
-      binding = [groupId];
+// --- ADMIN SYSTEM ENDPOINTS ---
+
+// 6. GET ALL USERS (Admin only)
+app.get('/api/protected/admin/users', async (c) => {
+  const userId = c.get('userId');
+  const db = c.env?.DB;
+
+  if (!db) {
+    return c.json({ error: 'D1 not active' });
+  }
+
+  try {
+    // Verify user is admin
+    const caller = await db.prepare('SELECT is_admin FROM users WHERE id = ?').bind(userId).first();
+    if (!caller || caller.is_admin !== 1) {
+      return c.json({ error: 'Acesso negado: Requer privilégios de administrador' }, 403);
     }
 
-    const { results } = await db.prepare(query).bind(...binding).all();
-    return c.json(results);
+    const { results: allUsers } = await db.prepare('SELECT id, name, email, points, status, is_admin FROM users ORDER BY created_at DESC').all();
+    return c.json(allUsers);
+  } catch (err) {
+    return c.json({ error: err.message }, 500);
+  }
+});
+
+// 7. TOGGLE USER STATUS (Admin only)
+app.post('/api/protected/admin/users/toggle-status', async (c) => {
+  const userId = c.get('userId');
+  const { targetUserId, status } = await c.req.json();
+  const db = c.env?.DB;
+
+  if (!db) {
+    return c.json({ success: true });
+  }
+
+  try {
+    // Verify user is admin
+    const caller = await db.prepare('SELECT is_admin FROM users WHERE id = ?').bind(userId).first();
+    if (!caller || caller.is_admin !== 1) {
+      return c.json({ error: 'Acesso negado: Requer privilégios de administrador' }, 403);
+    }
+
+    await db.prepare('UPDATE users SET status = ? WHERE id = ?').bind(status, targetUserId).run();
+    return c.json({ success: true });
   } catch (err) {
     return c.json({ error: err.message }, 500);
   }
@@ -303,27 +287,22 @@ async function handleCronTrigger(env) {
   }
 
   try {
-    // 1. Fetch matches starting within the next 1 hour that haven't sent the email
     const { results: upcomingMatches } = await db.prepare(
       "SELECT * FROM matches WHERE start_time <= datetime('now', '+1 hour') AND email_sent = 0"
     ).all();
 
     if (upcomingMatches.length === 0) {
-      console.log("Nenhuma partida programada para a próxima 1 hora.");
       return;
     }
 
-    // 2. Fetch all user emails to broadcast to
-    const { results: users } = await db.prepare("SELECT email, name FROM users").all();
+    const { results: users } = await db.prepare("SELECT email, name FROM users WHERE status = 'approved'").all();
     const recipientEmails = users.map(u => u.email).filter(e => e && e.includes("@"));
 
     if (recipientEmails.length === 0) {
-      console.log("Nenhum destinatário de e-mail cadastrado.");
       return;
     }
 
     for (const match of upcomingMatches) {
-      // 3. Get all predictions for this match
       const { results: predictions } = await db.prepare(
         `SELECT u.name, p.home_score, p.away_score 
          FROM predictions p 
@@ -331,7 +310,6 @@ async function handleCronTrigger(env) {
          WHERE p.match_id = ?`
       ).bind(match.id).all();
 
-      // 4. Build email HTML body
       let predictionsListHtml = "";
       if (predictions.length === 0) {
         predictionsListHtml = "<p>Nenhum palpite foi cadastrado para esta partida.</p>";
@@ -365,11 +343,10 @@ async function handleCronTrigger(env) {
           
           ${predictionsListHtml}
           
-          <p style="margin-top: 24px; font-size: 12px; color: #777;">Este e-mail é gerado automaticamente pelo sistema de auditoria do Bolão 2026.</p>
+          <p style="margin-top: 24px; font-size: 12px; color: #777;">Este e-mail é gerado automaticamente pelo sistema de transparência do Bolão 2026.</p>
         </div>
       `;
 
-      // 5. Send emails via Resend API
       if (env.RESEND_API_KEY) {
         const res = await fetch("https://api.resend.com/emails", {
           method: "POST",
@@ -378,7 +355,7 @@ async function handleCronTrigger(env) {
             "Authorization": `Bearer ${env.RESEND_API_KEY}`
           },
           body: JSON.stringify({
-            from: "Bolao 2026 <transparencia@resend.dev>", // Needs verified domain on Resend, or using their default sandbox address
+            from: "Bolao 2026 <transparencia@resend.dev>",
             to: recipientEmails,
             subject: `[Transparência] Palpites: ${match.home_team} x ${match.away_team}`,
             html: emailHtml
@@ -386,22 +363,9 @@ async function handleCronTrigger(env) {
         });
 
         if (res.ok) {
-          console.log(`E-mail de transparência enviado para ${recipientEmails.length} usuários para a partida ${match.id}`);
-          // Mark email as sent
           await db.prepare("UPDATE matches SET email_sent = 1 WHERE id = ?").bind(match.id).run();
-        } else {
-          const errText = await res.text();
-          console.error(`Erro ao disparar Resend API: ${errText}`);
         }
       } else {
-        // Mock fallback log
-        console.log("===== MOCK EMAIL BROADCAST =====");
-        console.log(`Destinatários: ${recipientEmails.join(", ")}`);
-        console.log(`Assunto: [Transparência] Palpites: ${match.home_team} x ${match.away_team}`);
-        console.log(emailHtml);
-        console.log("================================");
-        
-        // Local simulation: Mark as sent anyway
         await db.prepare("UPDATE matches SET email_sent = 1 WHERE id = ?").bind(match.id).run();
       }
     }

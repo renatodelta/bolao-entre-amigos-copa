@@ -1,5 +1,5 @@
 /* ==========================================================================
-   BOLÃO COPA 2026 - APPLICATION LOGIC WITH API & AUTH ENTITY
+   BOLÃO COPA 2026 - APPLICATION LOGIC WITH ADMIN APPROVAL
    ========================================================================== */
 
 // --- DUAL MODE CONFIGURATION ---
@@ -9,25 +9,75 @@ let isApiActive = false; // Toggled dynamically on initial connection check
 // Mock database inside LocalStorage for fallback testing
 const DEFAULT_MOCK_USERS_DB = [
   {
+    id: "admin_id",
+    name: "Administrador",
+    email: "admin@bolao.com",
+    password: "admin123",
+    points: 0,
+    accuracy: 0,
+    globalRank: 999,
+    levelTitle: "Nível 100 — Organizador",
+    status: "approved",
+    is_admin: 1,
+    notificationsEnabled: true
+  },
+  {
     id: "pedro_mock_id",
     name: "Pedro Alcântara",
     email: "pedro@bolao.com",
     password: "123456",
     points: 1240,
     accuracy: 68,
-    globalRank: 42,
-    groups: [
-      { id: "g1", name: "Firma & Breja", rank: 4, total: 12 },
-      { id: "g2", name: "Família Silva", rank: 1, total: 6 }
-    ],
+    globalRank: 3,
     levelTitle: "Nível 24 — Artilheiro",
+    status: "approved",
+    is_admin: 0,
+    notificationsEnabled: true
+  },
+  {
+    id: "user_ana_id",
+    name: "Ana Cláudia",
+    email: "ana@bolao.com",
+    password: "123456",
+    points: 1520,
+    accuracy: 68,
+    globalRank: 2,
+    levelTitle: "Nível 30 — Veterana",
+    status: "approved",
+    is_admin: 0,
+    notificationsEnabled: true
+  },
+  {
+    id: "user_rodrigo_id",
+    name: "Rodrigo",
+    email: "rodrigo@bolao.com",
+    password: "123456",
+    points: 1580,
+    accuracy: 72,
+    globalRank: 1,
+    levelTitle: "Nível 35 — Mestre",
+    status: "approved",
+    is_admin: 0,
+    notificationsEnabled: true
+  },
+  {
+    id: "user_lucas_id",
+    name: "Lucas Lima",
+    email: "lucas@bolao.com",
+    password: "123456",
+    points: 0,
+    accuracy: 0,
+    globalRank: 999,
+    levelTitle: "Nível 1 — Estreante",
+    status: "pending",
+    is_admin: 0,
     notificationsEnabled: true
   }
 ];
 
 // --- INITIAL STATE ---
 const DEFAULT_STATE = {
-  user: null, // Populated after login
+  user: null, 
   predictions: {}, 
   matches: [
     {
@@ -87,23 +137,9 @@ const DEFAULT_STATE = {
   ],
   rankings: {
     global: [
-      { name: "Rodrigo 'The King'", avatar: "avatar1.jpg", points: 1580, trend: "up", isCurrentUser: false },
+      { name: "Rodrigo", avatar: "avatar1.jpg", points: 1580, trend: "up", isCurrentUser: false },
       { name: "Ana Cláudia", avatar: "avatar2.jpg", points: 1520, trend: "same", isCurrentUser: false },
-      { name: "Bruno Santos", avatar: "avatar.jpg", points: 1390, trend: "down", isCurrentUser: false },
-      { name: "Pedro Alcântara", avatar: "avatar.jpg", points: 1240, trend: "up", isCurrentUser: true },
-      { name: "Mariana Costa", avatar: "avatar2.jpg", points: 1100, trend: "same", isCurrentUser: false }
-    ],
-    g1: [
-      { name: "Bruno Santos", avatar: "avatar.jpg", points: 1390, trend: "same", isCurrentUser: false },
-      { name: "Lucas Lima", avatar: "avatar1.jpg", points: 1310, trend: "up", isCurrentUser: false },
-      { name: "Carla Mendes", avatar: "avatar2.jpg", points: 1280, trend: "down", isCurrentUser: false },
-      { name: "Pedro Alcântara", avatar: "avatar.jpg", points: 1240, trend: "up", isCurrentUser: true },
-      { name: "Tiago Souza", avatar: "avatar1.jpg", points: 1190, trend: "same", isCurrentUser: false }
-    ],
-    g2: [
-      { name: "Pedro Alcântara", avatar: "avatar.jpg", points: 1240, trend: "same", isCurrentUser: true },
-      { name: "Vovô Silva", avatar: "avatar1.jpg", points: 1150, trend: "up", isCurrentUser: false },
-      { name: "Tia Maria", avatar: "avatar2.jpg", points: 1080, trend: "down", isCurrentUser: false }
+      { name: "Pedro Alcântara", avatar: "avatar.jpg", points: 1240, trend: "up", isCurrentUser: true }
     ]
   }
 };
@@ -157,6 +193,10 @@ const authEmailInput = document.getElementById("auth-email-input");
 const authPassInput = document.getElementById("auth-pass-input");
 const sandboxIndicator = document.querySelector(".sandbox-indicator");
 
+// Status alerts & Banners
+const pendingAlertBanner = document.getElementById("pending-alert-banner");
+const profileAccountStatus = document.getElementById("profile-account-status");
+
 // Tabs & Views
 const viewPanels = document.querySelectorAll(".view-panel");
 const navTabs = document.querySelectorAll(".nav-tab");
@@ -164,25 +204,22 @@ const welcomeName = document.getElementById("welcome-name");
 const homeTotalPoints = document.getElementById("home-total-points");
 const homeAccuracy = document.getElementById("home-accuracy");
 const matchesListContainer = document.getElementById("matches-list-container");
-const rankingGroupSelect = document.getElementById("ranking-group-select");
 const fullLeaderboardList = document.getElementById("full-leaderboard-list");
 const homeRankingPreviewContainer = document.getElementById("home-ranking-preview-container");
-const groupsListContainer = document.getElementById("groups-list-container");
 const toastContainer = document.getElementById("toast-container");
 const notificationBadge = document.getElementById("notification-badge");
 
-// Profile tab fields
+// Profile fields
 const profileDisplayName = document.getElementById("profile-display-name");
 const profileLevelTitle = document.getElementById("profile-level-title");
 const profilePoints = document.getElementById("profile-points");
 const profileAccuracy = document.getElementById("profile-accuracy");
 const profileGlobalRank = document.getElementById("profile-global-rank");
-const profileGroupsCount = document.getElementById("profile-groups-count");
 
 // Modals
 const predictionModal = document.getElementById("prediction-modal");
 const profileModal = document.getElementById("profile-modal");
-const groupModal = document.getElementById("group-modal");
+const adminModal = document.getElementById("admin-modal");
 
 // Predict modal fields
 const modalHomeFlag = document.getElementById("modal-home-flag");
@@ -191,6 +228,9 @@ const modalHomeScore = document.getElementById("modal-home-score");
 const modalAwayFlag = document.getElementById("modal-away-flag");
 const modalAwayName = document.getElementById("modal-away-name");
 const modalAwayScore = document.getElementById("modal-away-score");
+
+// Admin Panel user list container
+const adminUsersListContainer = document.getElementById("admin-users-list-container");
 
 let currentEditingMatchId = null;
 let isSignupMode = false;
@@ -225,14 +265,13 @@ async function checkBackendConnectivity() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: "test", password: "test" })
     });
-    // If we reach this far without a TypeError, server is up.
     isApiActive = true;
     sandboxIndicator.style.display = "none";
-    console.log("Cloudflare Workers API Active. API Mode enabled.");
+    console.log("Cloudflare Workers API Active.");
   } catch (e) {
     isApiActive = false;
     sandboxIndicator.style.display = "block";
-    console.log("Cloudflare Workers API Offline. Standalone Local Storage Mock Mode enabled.");
+    console.log("Standalone Local Storage Mock Mode enabled.");
   }
 }
 
@@ -256,7 +295,7 @@ async function apiRequest(endpoint, method = "GET", body = null) {
   return data;
 }
 
-// --- STATE SYNCING ROUTINES (API VS LOCAL FALLBACK) ---
+// --- STATE SYNCING ROUTINES ---
 async function syncSavePrediction(matchId, homeScore, awayScore) {
   state.predictions[matchId] = { homeScore, awayScore };
   saveState();
@@ -270,45 +309,9 @@ async function syncSavePrediction(matchId, homeScore, awayScore) {
   }
 }
 
-async function syncCreateGroup(name) {
-  const newGroupId = `g_${Date.now()}`;
-  const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-  
-  const newGroup = {
-    id: newGroupId,
-    name: name,
-    rank: 1,
-    total: 1
-  };
-  
-  state.user.groups.push(newGroup);
-  
-  // Add current user to group ranking list locally
-  state.rankings[newGroupId] = [
-    { name: state.user.name, avatar: state.user.avatar, points: state.user.points, trend: "same", isCurrentUser: true }
-  ];
-  
-  saveState();
-
-  if (isApiActive) {
-    try {
-      const data = await apiRequest("/api/protected/groups/create", "POST", { name });
-      // Update local storage IDs with real server ones if synced
-      if (data.groupId) {
-        newGroup.id = data.groupId;
-        saveState();
-      }
-    } catch (err) {
-      console.warn("API Group creation failed, saved locally", err);
-    }
-  }
-
-  return { groupId: newGroup.id, inviteCode };
-}
-
 // --- AUTHENTICATION FLOW (LOGIN/SIGNUP) ---
 async function handleAuthSubmit() {
-  const email = authEmailInput.value.trim();
+  const email = authEmailInput.value.trim().toLowerCase();
   const password = authPassInput.value.trim();
   const name = authNameInput.value.trim();
 
@@ -322,31 +325,19 @@ async function handleAuthSubmit() {
 
   try {
     if (isApiActive) {
-      // Connect to Cloudflare Worker
       if (isSignupMode) {
         const data = await apiRequest("/api/auth/register", "POST", { name, email, password });
         localStorage.setItem("bolao_auth_token", data.token);
-        state.user = {
-          name: name,
-          avatar: "avatar.jpg",
-          points: 0,
-          accuracy: 0,
-          globalRank: 999,
-          groups: [],
-          levelTitle: "Nível 1 — Estreante",
-          notificationsEnabled: true
-        };
+        state.user = data.user;
       } else {
         const data = await apiRequest("/api/auth/login", "POST", { email, password });
         localStorage.setItem("bolao_auth_token", data.token);
         state.user = data.user;
       }
     } else {
-      // Standalone LocalStorage Emulation
       const usersDB = loadMockUsersDB();
       
       if (isSignupMode) {
-        // Register locally
         if (usersDB.some(u => u.email === email)) {
           throw new Error("E-mail já cadastrado.");
         }
@@ -359,9 +350,10 @@ async function handleAuthSubmit() {
           password: password,
           points: 0,
           accuracy: 0,
-          globalRank: 50,
-          groups: [],
+          globalRank: usersDB.length + 1,
           levelTitle: "Nível 1 — Estreante",
+          status: "pending", // Always pending on registry
+          is_admin: 0,
           notificationsEnabled: true
         };
         
@@ -371,7 +363,6 @@ async function handleAuthSubmit() {
         localStorage.setItem("bolao_auth_token", "mock-token-" + newMockId);
         state.user = newMockUser;
       } else {
-        // Login locally
         const found = usersDB.find(u => u.email === email && u.password === password);
         if (!found) {
           throw new Error("E-mail ou senha inválidos.");
@@ -382,12 +373,10 @@ async function handleAuthSubmit() {
       }
     }
 
-    // Success Authentication sequence
     saveState();
     appShellContainer.classList.remove("auth-required");
     showToast(`Bem-vindo, ${state.user.name}!`, "success");
     
-    // Initialize UI Panels
     initAppContent();
   } catch (err) {
     showToast(err.message || "Erro na autenticação", "danger");
@@ -410,30 +399,152 @@ function handleLogout() {
   }
 }
 
-// --- SPA VIEW NAVIGATION ---
-function switchTab(targetViewId) {
-  viewPanels.forEach(panel => {
-    panel.classList.remove("active");
-  });
+// --- ADMIN USERS RETRIEVAL & RENDER ---
+async function loadAdminUsers() {
+  adminUsersListContainer.innerHTML = "";
   
-  const targetPanel = document.getElementById(targetViewId);
-  if (targetPanel) {
-    targetPanel.classList.add("active");
-  }
-
-  navTabs.forEach(tab => {
-    if (tab.dataset.target === targetViewId) {
-      tab.classList.add("active");
+  try {
+    let usersList = [];
+    if (isApiActive) {
+      usersList = await apiRequest("/api/protected/admin/users");
     } else {
-      tab.classList.remove("active");
+      // Mock mode LocalStorage retrieval
+      usersList = loadMockUsersDB();
     }
-  });
-
-  const main = document.querySelector(".app-main");
-  if (main) main.scrollTop = 0;
+    
+    if (usersList.length === 0) {
+      adminUsersListContainer.innerHTML = "<p style='color: var(--color-secondary); text-align: center; padding: 20px;'>Nenhum usuário cadastrado.</p>";
+      return;
+    }
+    
+    usersList.forEach(u => {
+      // Don't show admin toggle for oneself
+      if (u.id === state.user.id) return;
+      
+      const card = document.createElement("div");
+      card.className = "admin-user-card";
+      
+      const badgeClass = u.status === "approved" ? "approved" : "pending";
+      const badgeText = u.status === "approved" ? "Liberado" : "Pendente";
+      
+      let actionBtnHtml = "";
+      if (u.is_admin === 1) {
+        actionBtnHtml = "<span style='font-size: 11px; color: var(--color-secondary); font-weight: 700;'>ADMIN</span>";
+      } else if (u.status === "approved") {
+        actionBtnHtml = `<button class="btn-status-toggle suspend-action" data-user-id="${u.id}" data-action="pending">Suspender</button>`;
+      } else {
+        actionBtnHtml = `<button class="btn-status-toggle approve-action" data-user-id="${u.id}" data-action="approved">Liberar Acesso</button>`;
+      }
+      
+      card.innerHTML = `
+        <div class="admin-user-info">
+          <span class="name">${u.name}</span>
+          <span class="email">${u.email}</span>
+          <span class="points">${u.points} Pontos</span>
+        </div>
+        <div class="admin-user-actions">
+          <span class="status-badge ${badgeClass}">${badgeText}</span>
+          ${actionBtnHtml}
+        </div>
+      `;
+      
+      // Bind toggle status event click
+      const actionBtn = card.querySelector(".btn-status-toggle");
+      if (actionBtn) {
+        actionBtn.addEventListener("click", async () => {
+          const targetUserId = actionBtn.dataset.userId;
+          const nextStatus = actionBtn.dataset.action;
+          
+          await toggleUserStatus(targetUserId, nextStatus);
+        });
+      }
+      
+      adminUsersListContainer.appendChild(card);
+    });
+  } catch (err) {
+    showToast("Erro ao carregar usuários admin: " + err.message, "danger");
+  }
 }
 
-// --- UI RENDERING METHODS ---
+async function toggleUserStatus(targetUserId, nextStatus) {
+  try {
+    if (isApiActive) {
+      await apiRequest("/api/protected/admin/users/toggle-status", "POST", { targetUserId, status: nextStatus });
+    } else {
+      // Mock Mode toggle
+      const db = loadMockUsersDB();
+      const userIdx = db.findIndex(u => u.id === targetUserId);
+      if (userIdx !== -1) {
+        db[userIdx].status = nextStatus;
+        saveMockUsersDB(db);
+        
+        // Also update local rankings if necessary
+        const globalRankItem = state.rankings.global.find(item => item.name === db[userIdx].name);
+        if (globalRankItem) {
+          // If suspended, we could hide them, but let's keep them in memory
+        }
+      }
+    }
+    
+    showToast("Status do usuário atualizado com sucesso!", "success");
+    loadAdminUsers();
+    
+    // Refresh global ranking list in case an approval affects points displays
+    renderLeaderboard("global");
+  } catch (err) {
+    showToast("Erro ao alterar status: " + err.message, "danger");
+  }
+}
+
+// --- LOAD MATCHES DATA FROM API ---
+async function loadMatchesData() {
+  if (isApiActive) {
+    try {
+      const dbMatches = await apiRequest("/api/matches");
+      state.matches = dbMatches.map(m => ({
+        id: m.id,
+        homeTeam: m.home_team,
+        homeAbbrev: m.home_abbrev,
+        homeFlag: m.home_flag,
+        awayTeam: m.away_team,
+        awayAbbrev: m.away_abbrev,
+        awayFlag: m.away_flag,
+        status: m.status,
+        time: m.time,
+        homeScore: m.home_score,
+        awayScore: m.away_score,
+        realTimeMinute: m.id === "m1" ? 62 : null,
+        resultCalculated: m.id === "m1" ? (m.home_score >= 2) : false
+      }));
+    } catch (e) {
+      console.warn("Could not load matches from API, using cached/local matches", e);
+    }
+  }
+}
+
+// --- RENDER APP SCREEN AFTER LOGGED IN ---
+async function initAppContent() {
+  await loadMatchesData();
+  updateProfileUI();
+  renderLeaderboard("global");
+  renderHomeRankingPreview();
+  updateFeaturedMatchCard();
+  renderMatchesList("all");
+
+  // Show/Hide Admin Settings Shortcut Button based on privileges
+  const adminBtn = document.getElementById("admin-panel-menu-btn");
+  if (state.user?.is_admin === 1) {
+    adminBtn.style.display = "flex";
+  } else {
+    adminBtn.style.display = "none";
+  }
+
+  // Set initial header avatar
+  document.getElementById("header-avatar-img").src = `public/${state.user?.avatar || 'avatar.jpg'}`;
+  document.getElementById("profile-avatar-large").src = `public/${state.user?.avatar || 'avatar.jpg'}`;
+}
+
+// --- UI UPDATES FOR USER APPROVAL BANNER ---
 function updateProfileUI() {
   const u = state.user;
   if (!u) return;
@@ -450,7 +561,17 @@ function updateProfileUI() {
   profilePoints.textContent = pointsFormatted;
   profileAccuracy.textContent = `${u.accuracy}%`;
   profileGlobalRank.textContent = `#${u.globalRank || 999}`;
-  profileGroupsCount.textContent = (u.groups?.length || 0) + 2; 
+
+  // Control account status banner & text values
+  if (u.status === "pending") {
+    pendingAlertBanner.style.display = "block";
+    profileAccountStatus.textContent = "Pendente";
+    profileAccountStatus.style.color = "#f59e0b";
+  } else {
+    pendingAlertBanner.style.display = "none";
+    profileAccountStatus.textContent = "Ativo";
+    profileAccountStatus.style.color = "var(--color-success)";
+  }
 
   const notifStateLabel = document.getElementById("notif-state-label");
   if (notifStateLabel) {
@@ -458,62 +579,31 @@ function updateProfileUI() {
   }
 }
 
-function renderGroups() {
-  const createCard = document.getElementById("create-group-card-btn");
-  groupsListContainer.innerHTML = "";
-  
-  const groupsList = state.user?.groups || [];
-  groupsList.forEach(g => {
-    const card = document.createElement("div");
-    card.className = "group-circle-card ripple";
-    card.dataset.groupId = g.id;
-    card.innerHTML = `
-      <div class="group-icon-holder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-          <circle cx="9" cy="7" r="4"></circle>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-        </svg>
-      </div>
-      <span class="group-circle-name">${g.name}</span>
-      <span class="group-circle-rank">${g.rank}º de ${g.total}</span>
-    `;
-    
-    card.addEventListener("click", () => {
-      rankingGroupSelect.value = g.id;
-      renderLeaderboard(g.id);
-      switchTab("view-ranking");
-    });
-    
-    groupsListContainer.appendChild(card);
-  });
-  
-  groupsListContainer.appendChild(createCard);
-}
-
 function renderLeaderboard(groupId = "global") {
-  let rankingList = state.rankings[groupId] || [];
-  
-  fullLeaderboardList.innerHTML = "";
-  
-  // Update current user points inside this list for visual feedback
-  const userRankItem = rankingList.find(item => item.isCurrentUser);
-  if (userRankItem && state.user) {
-    userRankItem.points = state.user.points;
-    userRankItem.name = state.user.name;
-  } else if (!userRankItem && state.user) {
-    // Add current user if not present
-    rankingList.push({
-      name: state.user.name,
-      avatar: "avatar.jpg",
-      points: state.user.points,
-      trend: "up",
-      isCurrentUser: true
-    });
+  // Mock fallback logic loads global database to calculate rankings dynamically in mock mode!
+  let rankingList = [];
+  if (!isApiActive) {
+    const db = loadMockUsersDB();
+    rankingList = db
+      .filter(user => user.status === "approved") // Only display approved users in the leaderboard
+      .map(user => ({
+        name: user.name,
+        avatar: user.avatar || "avatar.jpg",
+        points: user.points,
+        trend: user.id === "pedro_mock_id" ? "up" : "same",
+        isCurrentUser: user.id === state.user.id
+      }));
+  } else {
+    rankingList = [...(state.rankings.global || [])];
+    const userRankItem = rankingList.find(item => item.isCurrentUser);
+    if (userRankItem && state.user) {
+      userRankItem.points = state.user.points;
+      userRankItem.name = state.user.name;
+    }
   }
   
   rankingList.sort((a, b) => b.points - a.points);
+  fullLeaderboardList.innerHTML = "";
   
   rankingList.forEach((player, index) => {
     const pos = index + 1;
@@ -549,7 +639,21 @@ function renderLeaderboard(groupId = "global") {
 }
 
 function renderHomeRankingPreview() {
-  const rankingList = [...(state.rankings.global || [])];
+  let rankingList = [];
+  if (!isApiActive) {
+    const db = loadMockUsersDB();
+    rankingList = db
+      .filter(user => user.status === "approved")
+      .map(user => ({
+        name: user.name,
+        avatar: user.avatar || "avatar.jpg",
+        points: user.points,
+        trend: user.id === "pedro_mock_id" ? "up" : "same"
+      }));
+  } else {
+    rankingList = [...(state.rankings.global || [])];
+  }
+  
   rankingList.sort((a, b) => b.points - a.points);
   
   const top2 = rankingList.slice(0, 2);
@@ -587,8 +691,6 @@ function renderHomeRankingPreview() {
     `;
     
     card.addEventListener("click", () => {
-      rankingGroupSelect.value = "global";
-      renderLeaderboard("global");
       switchTab("view-ranking");
     });
     
@@ -657,10 +759,11 @@ function renderMatchesList(filter = "all") {
           </div>
         `;
       } else {
+        const buttonText = state.user?.status === "pending" ? "Bloqueado" : "Palpitar";
         predictionBarHtml = `
           <div class="match-prediction-bar">
             <span class="pred-label pred-empty">Sem palpite</span>
-            <button class="btn btn-primary btn-gold" style="padding: 4px 10px; font-size: 10px; border-radius: 6px;">Palpitar</button>
+            <button class="btn btn-primary btn-gold" style="padding: 4px 10px; font-size: 10px; border-radius: 6px;">${buttonText}</button>
           </div>
         `;
       }
@@ -732,39 +835,26 @@ function updateFeaturedMatchCard() {
   if (featured.status === "completed") {
     featuredBtn.innerHTML = `VER DETALHES <span class="arrow">→</span>`;
   } else {
-    const userPred = state.predictions[featured.id];
-    if (userPred) {
-      featuredBtn.innerHTML = `PALPITE: ${userPred.homeScore} x ${userPred.awayScore} (Editar) <span class="arrow">→</span>`;
+    if (state.user?.status === "pending") {
+      featuredBtn.innerHTML = `BLOQUEADO (PENDENTE) <span class="arrow">🔒</span>`;
     } else {
-      featuredBtn.innerHTML = `PALPITAR AGORA <span class="arrow">→</span>`;
+      const userPred = state.predictions[featured.id];
+      if (userPred) {
+        featuredBtn.innerHTML = `PALPITE: ${userPred.homeScore} x ${userPred.awayScore} (Editar) <span class="arrow">→</span>`;
+      } else {
+        featuredBtn.innerHTML = `PALPITAR AGORA <span class="arrow">→</span>`;
+      }
     }
   }
 }
 
-function getPointsAwarded(predHome, predAway, realHome, realAway) {
-  if (predHome === null || predAway === null || realHome === null || realAway === null) return 0;
-  
-  const pHome = parseInt(predHome);
-  const pAway = parseInt(predAway);
-  const rHome = parseInt(realHome);
-  const rAway = parseInt(realAway);
-  
-  if (pHome === rHome && pAway === rAway) {
-    return 25; // Perfect
-  }
-  
-  const predDiff = pHome - pAway;
-  const realDiff = rHome - rAway;
-  
-  if ((predDiff > 0 && realDiff > 0) || (predDiff < 0 && realDiff < 0) || (predDiff === 0 && realDiff === 0)) {
-    return 10; // Winner/Draw outcome correct
-  }
-  
-  return 0;
-}
-
-// --- MODALS OPEN/CLOSE ---
+// --- MODALS OPEN CONTROL WITH PENDING BLOCKS ---
 function openPredictionModal(matchId) {
+  if (state.user?.status === "pending") {
+    showToast("⚠️ Sua conta está pendente de liberação. Confirme o pagamento para liberar os palpites.", "warning");
+    return;
+  }
+
   const m = state.matches.find(item => item.id === matchId);
   if (!m) return;
   
@@ -789,7 +879,7 @@ function openPredictionModal(matchId) {
 function closeAllModals() {
   predictionModal.classList.remove("open");
   profileModal.classList.remove("open");
-  groupModal.classList.remove("open");
+  adminModal.classList.remove("open");
   currentEditingMatchId = null;
 }
 
@@ -821,23 +911,25 @@ function simulateLiveMatchTick() {
     showToast("🏁 FIM DE JOGO! Brasil 2 x 1 EUA. Pontuações do bolão computadas!", "info");
     notificationBadge.style.display = "block";
     
-    // Add points if predicted
-    const pred = state.predictions["m1"];
-    if (pred) {
-      const pts = getPointsAwarded(pred.homeScore, pred.awayScore, liveMatch.homeScore, liveMatch.awayScore);
-      state.user.points += pts;
-      if (pts === 25) {
-        showToast("🔥 Placar exato! Você ganhou +25 pontos no bolão!", "success");
-      } else if (pts === 10) {
-        showToast("👍 Acertou o vencedor! Você ganhou +10 pontos!", "success");
-      } else {
-        showToast("❌ Você errou o palpite de Brasil x EUA. 0 pontos.", "danger");
+    // Add points only if approved and predicted
+    if (state.user?.status === "approved") {
+      const pred = state.predictions["m1"];
+      if (pred) {
+        const pts = getPointsAwarded(pred.homeScore, pred.awayScore, liveMatch.homeScore, liveMatch.awayScore);
+        state.user.points += pts;
+        if (pts === 25) {
+          showToast("🔥 Placar exato! Você ganhou +25 pontos no bolão!", "success");
+        } else if (pts === 10) {
+          showToast("👍 Acertou o vencedor! Você ganhou +10 pontos!", "success");
+        } else {
+          showToast("❌ Você errou o palpite de Brasil x EUA. 0 pontos.", "danger");
+        }
       }
     }
     
     saveState();
     updateProfileUI();
-    renderLeaderboard(rankingGroupSelect.value);
+    renderLeaderboard("global");
     renderHomeRankingPreview();
     updateFeaturedMatchCard();
     renderMatchesList(document.querySelector(".filter-tab.active").dataset.filter);
@@ -848,57 +940,6 @@ function simulateLiveMatchTick() {
       renderMatchesList(document.querySelector(".filter-tab.active").dataset.filter);
     }
   }
-}
-
-// --- LOAD MATCHES DATA FROM API ---
-async function loadMatchesData() {
-  if (isApiActive) {
-    try {
-      const dbMatches = await apiRequest("/api/matches");
-      state.matches = dbMatches.map(m => ({
-        id: m.id,
-        homeTeam: m.home_team,
-        homeAbbrev: m.home_abbrev,
-        homeFlag: m.home_flag,
-        awayTeam: m.away_team,
-        awayAbbrev: m.away_abbrev,
-        awayFlag: m.away_flag,
-        status: m.status,
-        time: m.time,
-        homeScore: m.home_score,
-        awayScore: m.away_score,
-        realTimeMinute: m.id === "m1" ? 62 : null,
-        resultCalculated: m.id === "m1" ? (m.home_score >= 2) : false
-      }));
-    } catch (e) {
-      console.warn("Could not load matches from API, using cached/local matches", e);
-    }
-  }
-}
-
-// --- RENDER APP SCREEN AFTER LOGGED IN ---
-async function initAppContent() {
-  await loadMatchesData();
-  updateProfileUI();
-  renderGroups();
-  renderLeaderboard("global");
-  renderHomeRankingPreview();
-  updateFeaturedMatchCard();
-  renderMatchesList("all");
-
-  // Populate ranking options
-  state.user.groups.forEach(g => {
-    if (![...rankingGroupSelect.options].some(opt => opt.value === g.id)) {
-      const option = document.createElement("option");
-      option.value = g.id;
-      option.textContent = `Grupo: ${g.name}`;
-      rankingGroupSelect.appendChild(option);
-    }
-  });
-
-  // Set initial header avatar
-  document.getElementById("header-avatar-img").src = `public/${state.user.avatar || 'avatar.jpg'}`;
-  document.getElementById("profile-avatar-large").src = `public/${state.user.avatar || 'avatar.jpg'}`;
 }
 
 // --- INITIALIZE LISTENERS ---
@@ -919,10 +960,8 @@ function initEventListeners() {
     }
   });
 
-  // Submit credentials
   authSubmitBtn.addEventListener("click", handleAuthSubmit);
 
-  // Tab switching
   navTabs.forEach(tab => {
     tab.addEventListener("click", () => {
       switchTab(tab.dataset.target);
@@ -931,12 +970,6 @@ function initEventListeners() {
 
   document.getElementById("header-avatar-btn").addEventListener("click", () => {
     switchTab("view-perfil");
-  });
-
-  document.getElementById("see-groups-link").addEventListener("click", () => {
-    rankingGroupSelect.value = "g1";
-    renderLeaderboard("g1");
-    switchTab("view-ranking");
   });
 
   document.getElementById("see-achievements-btn").addEventListener("click", () => {
@@ -952,9 +985,8 @@ function initEventListeners() {
     });
   });
 
-  document.getElementById("global-action-btn").addEventListener("click", () => {
-    groupModal.classList.add("open");
-  });
+  // Action button: floating button disabled or redirects to support
+  document.getElementById("global-action-btn").style.display = "none"; // Hide FAB since groups are removed
 
   document.getElementById("featured-palpitar-btn").addEventListener("click", () => {
     const featured = state.matches.find(m => m.status === "live") || state.matches[0];
@@ -998,7 +1030,6 @@ function initEventListeners() {
 
     state.user.name = name;
     
-    // Save to localStorage
     if (!isApiActive) {
       const usersDB = loadMockUsersDB();
       const uIdx = usersDB.findIndex(u => u.id === state.user.id);
@@ -1012,37 +1043,15 @@ function initEventListeners() {
     closeAllModals();
     showToast("Perfil atualizado!", "success");
     updateProfileUI();
-    renderLeaderboard(rankingGroupSelect.value);
+    renderLeaderboard("global");
   });
 
-  document.getElementById("create-group-card-btn").addEventListener("click", () => {
-    groupModal.classList.add("open");
+  // Admin Modal trigger click
+  document.getElementById("admin-panel-menu-btn").addEventListener("click", () => {
+    loadAdminUsers();
+    adminModal.classList.add("open");
   });
-  document.getElementById("close-group-modal").addEventListener("click", closeAllModals);
-  document.getElementById("cancel-group-btn").addEventListener("click", closeAllModals);
-  document.getElementById("save-group-btn").addEventListener("click", async () => {
-    const name = document.getElementById("group-name-input").value.trim();
-    if (!name) {
-      showToast("Digite o nome do grupo.", "warning");
-      return;
-    }
-
-    const { groupId, inviteCode } = await syncCreateGroup(name);
-    closeAllModals();
-    showToast(`Grupo criado! Código: ${inviteCode}`, "success");
-    
-    renderGroups();
-    
-    const option = document.createElement("option");
-    option.value = groupId;
-    option.textContent = `Grupo: ${name}`;
-    rankingGroupSelect.appendChild(option);
-    document.getElementById("group-name-input").value = "";
-  });
-
-  rankingGroupSelect.addEventListener("change", (e) => {
-    renderLeaderboard(e.target.value);
-  });
+  document.getElementById("close-admin-modal").addEventListener("click", closeAllModals);
 
   document.getElementById("toggle-notifications-btn").addEventListener("click", () => {
     state.user.notificationsEnabled = !state.user.notificationsEnabled;
@@ -1056,9 +1065,8 @@ function initEventListeners() {
     showToast("Você leu todas as notificações recentes.", "info");
   });
 
-  // Footer / Support action items
   document.getElementById("security-settings-btn").addEventListener("click", () => {
-    showToast("Sua conexão com o Cloudflare Workers está criptografada via HTTPS.", "info");
+    showToast("Conexão protegida e assinada.", "info");
   });
   document.getElementById("rules-btn").addEventListener("click", () => {
     showToast("Regras: Placar Exato = 25 pts. Vencedor Correto = 10 pts. Erro = 0 pts.", "info");
@@ -1077,7 +1085,6 @@ async function init() {
 
   const token = localStorage.getItem("bolao_auth_token");
   if (token) {
-    // Attempt auto-login
     try {
       if (isApiActive) {
         const uProfile = await apiRequest("/api/protected/me");
@@ -1093,7 +1100,7 @@ async function init() {
       appShellContainer.classList.remove("auth-required");
       initAppContent();
     } catch (e) {
-      console.warn("Session auto-login failed. Redirecting to login screen.", e);
+      console.warn("Session auto-login failed.", e);
       localStorage.removeItem("bolao_auth_token");
       appShellContainer.classList.add("auth-required");
     }
@@ -1101,12 +1108,10 @@ async function init() {
     appShellContainer.classList.add("auth-required");
   }
 
-  // Register PWA service worker
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").catch(e => console.log("SW failed", e));
   }
 
-  // Simulator loop
   setInterval(simulateLiveMatchTick, 18000);
 }
 

@@ -32,7 +32,7 @@ const authMiddleware = async (c, next) => {
 };
 
 // Bind JWT Validation on Protected Endpoints
-app.use('/api/protected/*', jwt({ secret: JWT_SECRET }));
+app.use('/api/protected/*', jwt({ secret: JWT_SECRET, alg: 'HS256' }));
 app.use('/api/protected/*', authMiddleware);
 
 // Helper for generating IDs

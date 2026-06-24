@@ -3,9 +3,7 @@
    ========================================================================== */
 
 // --- DUAL MODE CONFIGURATION ---
-const API_BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-  ? "http://localhost:8787"
-  : "https://bolao-api.dominguesrds29-code.workers.dev"; // Substitua pelo URL real do seu Worker após deploy 
+const API_BASE_URL = "https://bolao-api.dominguesrds29.workers.dev";
 let isApiActive = false; // Toggled dynamically on initial connection check
 
 // Mock database inside LocalStorage for fallback testing
@@ -1458,6 +1456,17 @@ function initEventListeners() {
     showToast("Você leu todas as notificações recentes.", "info");
   });
 
+  // Theme Toggle listener
+  const themeToggleBtn = document.getElementById("theme-toggle-btn");
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener("click", () => {
+      document.body.classList.toggle("hero-theme");
+      const isHero = document.body.classList.contains("hero-theme");
+      localStorage.setItem("theme_preference", isHero ? "hero" : "dark");
+      updateThemeIcons();
+    });
+  }
+
   document.getElementById("security-settings-btn").addEventListener("click", () => {
     showToast("Conexão protegida e assinada.", "info");
   });
@@ -1470,8 +1479,30 @@ function initEventListeners() {
   document.getElementById("logout-btn").addEventListener("click", handleLogout);
 }
 
+function updateThemeIcons() {
+  const isHero = document.body.classList.contains("hero-theme");
+  const sunIcon = document.querySelector("#theme-toggle-btn .sun-icon");
+  const moonIcon = document.querySelector("#theme-toggle-btn .moon-icon");
+  if (sunIcon && moonIcon) {
+    if (isHero) {
+      sunIcon.style.display = "block";
+      moonIcon.style.display = "none";
+    } else {
+      sunIcon.style.display = "none";
+      moonIcon.style.display = "block";
+    }
+  }
+}
+
 // --- APP INITIALIZER ---
 async function init() {
+  // Theme Initialization
+  const savedTheme = localStorage.getItem("theme_preference");
+  if (savedTheme === "hero") {
+    document.body.classList.add("hero-theme");
+  }
+  updateThemeIcons();
+
   await checkBackendConnectivity();
   loadState();
   initEventListeners();

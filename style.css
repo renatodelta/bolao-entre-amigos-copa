@@ -11,6 +11,14 @@
   --bg-card: rgba(12, 34, 76, 0.7);
   --bg-card-hover: rgba(18, 47, 102, 0.85);
   --bg-input: #08193a;
+  --bg-header: rgba(3, 18, 44, 0.85);
+  --bg-nav: rgba(3, 18, 44, 0.85);
+  --border-header: rgba(255, 255, 255, 0.05);
+  --border-nav: rgba(255, 255, 255, 0.05);
+  --bg-modal: #041635;
+  --bg-modal-overlay: rgba(1, 9, 24, 0.75);
+  --featured-gradient: linear-gradient(180deg, rgba(3, 18, 44, 0.4) 0%, rgba(3, 18, 44, 0.85) 100%), 
+                        radial-gradient(ellipse at center, rgba(16, 185, 129, 0.1) 0%, rgba(3, 18, 44, 0) 70%);
   
   --color-primary: #ffffff;
   --color-secondary: #94a3b8;
@@ -43,6 +51,38 @@
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35);
   --shadow-gold: 0 0 15px rgba(255, 208, 0, 0.25);
   --shadow-glow-active: 0 0 20px rgba(30, 64, 175, 0.3);
+}
+
+/* Hero Theme Variables Switch (Superhero Vibe) */
+body.hero-theme {
+  --bg-body: #0b132b; /* Deep comic book navy */
+  --bg-shell: #1c2541; /* Softer steel blue/navy shell */
+  --bg-shell-gradient: linear-gradient(180deg, #1c2541 0%, #3a506b 100%); /* Heroic gradient */
+  --bg-card: rgba(28, 37, 65, 0.75); /* Slate card */
+  --bg-card-hover: rgba(58, 80, 107, 0.85);
+  --bg-input: #0b132b;
+  --bg-header: rgba(28, 37, 65, 0.9);
+  --bg-nav: rgba(28, 37, 65, 0.9);
+  --border-header: rgba(245, 158, 11, 0.2);
+  --border-nav: rgba(245, 158, 11, 0.2);
+  --bg-modal: #1c2541;
+  --bg-modal-overlay: rgba(11, 19, 43, 0.8);
+  --featured-gradient: linear-gradient(180deg, rgba(28, 37, 65, 0.4) 0%, rgba(28, 37, 65, 0.9) 100%), 
+                        radial-gradient(ellipse at center, rgba(225, 29, 72, 0.25) 0%, rgba(28, 37, 65, 0) 70%); /* Scarlet highlight */
+  
+  --color-primary: #ffffff;
+  --color-secondary: #cbd5e1; /* Ice slate text */
+  --color-accent: #ffd000; /* Warm hero gold */
+  --color-accent-hover: #d97706;
+  
+  --border-color: rgba(99, 102, 241, 0.35); /* Soft heroic indigo borders */
+  --border-color-glow: rgba(245, 158, 11, 0.6);
+  
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 15px rgba(99, 102, 241, 0.15);
+  --shadow-lg: 0 10px 25px rgba(11, 19, 43, 0.5);
+  --shadow-gold: 0 0 20px rgba(245, 158, 11, 0.35);
+  --shadow-glow-active: 0 0 20px rgba(99, 102, 241, 0.35);
 }
 
 /* Base Reset & Scrollbar */
@@ -96,9 +136,9 @@ body {
 /* Header styling */
 .app-header {
   height: var(--header-height);
-  background: rgba(3, 18, 44, 0.85);
+  background: var(--bg-header);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-header);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -279,8 +319,7 @@ p.subtitle {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(180deg, rgba(3, 18, 44, 0.4) 0%, rgba(3, 18, 44, 0.85) 100%), 
-                    radial-gradient(ellipse at center, rgba(16, 185, 129, 0.1) 0%, rgba(3, 18, 44, 0) 70%);
+  background-image: var(--featured-gradient);
   background-size: cover;
   background-position: center;
   z-index: 1;
@@ -1083,9 +1122,9 @@ p.subtitle {
 /* BOTTOM NAVIGATION BAR */
 .app-navigation {
   height: var(--nav-height);
-  background: rgba(3, 18, 44, 0.85);
+  background: var(--bg-nav);
   backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--border-nav);
   display: flex;
   position: absolute;
   bottom: 0;
@@ -1185,7 +1224,7 @@ p.subtitle {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(1, 9, 24, 0.75);
+  background: var(--bg-modal-overlay);
   backdrop-filter: blur(8px);
   z-index: 200;
   display: flex;
@@ -1201,7 +1240,7 @@ p.subtitle {
 }
 .modal-card {
   width: 100%;
-  background: #041635;
+  background: var(--bg-modal);
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
   border: 1px solid var(--border-color);

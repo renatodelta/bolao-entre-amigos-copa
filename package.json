@@ -1,0 +1,13 @@
+{
+  "name": "bolao-api",
+  "version": "1.0.0",
+  "description": "Backend API for Bolão Copa 2026",
+  "main": "server.js",
+  "type": "module",
+  "dependencies": {
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

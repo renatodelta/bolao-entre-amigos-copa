@@ -168,7 +168,7 @@ body {
 }
 
 .app-logo {
-  font-size: 23px;
+  font-size: 25px;
   font-weight: 900;
   letter-spacing: 1px;
   color: var(--color-primary);
@@ -240,7 +240,7 @@ h2, h3, h4 {
 }
 p.subtitle {
   color: var(--color-secondary);
-  font-size: 16px;
+  font-size: 18px;
   margin-top: 4px;
 }
 
@@ -253,14 +253,14 @@ p.subtitle {
   margin-bottom: 16px;
 }
 .banner-sub {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: 2px;
   color: var(--color-secondary);
   text-transform: uppercase;
 }
 .banner-title {
-  font-size: 30px;
+  font-size: 33px;
   font-weight: 800;
   color: var(--color-primary);
   margin-top: 2px;
@@ -289,14 +289,14 @@ p.subtitle {
   border-color: rgba(30, 64, 175, 0.7);
 }
 .mini-stat-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--color-accent);
   letter-spacing: 1px;
   margin-bottom: 4px;
 }
 .mini-stat-value {
-  font-size: 28px;
+  font-size: 31px;
   font-weight: 800;
   color: var(--color-primary);
 }
@@ -338,7 +338,7 @@ p.subtitle {
   background-color: rgba(239, 68, 68, 0.2);
   color: var(--color-live);
   border: 1px solid rgba(239, 68, 68, 0.4);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   padding: 4px 10px;
   border-radius: 20px;
@@ -383,24 +383,24 @@ p.subtitle {
   transform: scale(1.08);
 }
 .flag-icon {
-  font-size: 32px;
+  font-size: 35px;
   line-height: 1;
 }
 .team-abbrev {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: 1px;
 }
 
 .vs-divider {
-  font-size: 23px;
+  font-size: 25px;
   font-weight: 900;
   color: var(--color-accent);
   text-shadow: 0 0 8px rgba(255, 208, 0, 0.4);
 }
 
 .match-datetime {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--color-secondary);
   font-weight: 500;
   margin-bottom: 14px;
@@ -413,7 +413,7 @@ p.subtitle {
   font-family: var(--font-main);
   padding: 10px 18px;
   border-radius: 12px;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
@@ -451,7 +451,7 @@ p.subtitle {
   background-color: rgba(239, 68, 68, 0.12);
   color: var(--color-danger);
   border: 1px solid rgba(239, 68, 68, 0.25);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   padding: 12px;
 }
@@ -470,7 +470,7 @@ p.subtitle {
   margin-bottom: 12px;
 }
 .section-header h3 {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--color-primary);
 }
@@ -478,7 +478,7 @@ p.subtitle {
   background: none;
   border: none;
   color: var(--color-secondary);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 1px;
   cursor: pointer;
@@ -537,12 +537,12 @@ p.subtitle {
   color: var(--color-secondary);
 }
 .plus-holder span {
-  font-size: 32px;
+  font-size: 35px;
   font-weight: 300;
   line-height: 1;
 }
 .group-circle-name {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--color-primary);
   text-align: center;
@@ -552,7 +552,7 @@ p.subtitle {
   width: 100%;
 }
 .group-circle-rank {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--color-secondary);
   margin-top: 1px;
 }
@@ -583,7 +583,7 @@ p.subtitle {
   gap: 12px;
 }
 .ranking-pos {
-  font-size: 21px;
+  font-size: 23px;
   font-weight: 900;
   color: var(--color-secondary);
   width: 24px;
@@ -613,12 +613,12 @@ p.subtitle {
   object-fit: cover;
 }
 .ranking-name {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--color-primary);
 }
 .ranking-points {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--color-accent);
   margin-top: 2px;
@@ -651,7 +651,7 @@ p.subtitle {
   color: var(--color-secondary);
   padding: 8px 12px;
   font-family: var(--font-main);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -687,7 +687,7 @@ p.subtitle {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-secondary);
 }
@@ -718,10 +718,10 @@ p.subtitle {
   justify-content: flex-end;
 }
 .match-team-flag {
-  font-size: 25px;
+  font-size: 28px;
 }
 .match-team-name {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -731,13 +731,13 @@ p.subtitle {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 21px;
+  font-size: 23px;
   font-weight: 800;
   color: var(--color-primary);
 }
 .actual-score {
   color: var(--color-secondary);
-  font-size: 18px;
+  font-size: 20px;
   background: rgba(255, 255, 255, 0.05);
   padding: 2px 6px;
   border-radius: 4px;
@@ -750,7 +750,7 @@ p.subtitle {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: 14px;
 }
 .pred-label {
   color: var(--color-secondary);
@@ -782,7 +782,7 @@ p.subtitle {
   color: var(--color-primary);
   padding: 12px;
   font-family: var(--font-main);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   outline: none;
   cursor: pointer;
@@ -809,7 +809,7 @@ p.subtitle {
   background: rgba(3, 18, 44, 0.4);
   border-bottom: 1px solid var(--border-color);
   padding: 12px 16px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--color-secondary);
   letter-spacing: 0.5px;
@@ -846,7 +846,7 @@ p.subtitle {
 .leaderboard-cell-rank {
   width: 12%;
   text-align: center;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 800;
   color: var(--color-secondary);
 }
@@ -873,13 +873,13 @@ p.subtitle {
   object-fit: cover;
 }
 .leaderboard-cell-name {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
 }
 .leaderboard-cell-points {
   width: 20%;
   text-align: right;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 800;
   color: var(--color-primary);
 }
@@ -924,7 +924,7 @@ p.subtitle {
   transform: translateX(-50%);
   background-color: var(--color-accent);
   color: #03122c;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 800;
   padding: 3px 8px;
   border-radius: 12px;
@@ -934,7 +934,7 @@ p.subtitle {
 }
 
 .profile-name {
-  font-size: 25px;
+  font-size: 28px;
   font-weight: 800;
   color: var(--color-primary);
   margin-bottom: 4px;
@@ -943,7 +943,7 @@ p.subtitle {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--color-accent);
 }
@@ -965,14 +965,14 @@ p.subtitle {
   backdrop-filter: blur(10px);
 }
 .stat-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--color-secondary);
   letter-spacing: 0.5px;
   margin-bottom: 4px;
 }
 .stat-value {
-  font-size: 25px;
+  font-size: 28px;
   font-weight: 800;
   color: var(--color-accent);
 }
@@ -1019,7 +1019,7 @@ p.subtitle {
   height: 20px;
 }
 .achievement-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1.2;
 }
@@ -1048,7 +1048,7 @@ p.subtitle {
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   color: var(--color-primary);
   font-family: var(--font-main);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
   cursor: pointer;
   text-align: left;
@@ -1078,7 +1078,7 @@ p.subtitle {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--color-secondary);
 }
 
@@ -1106,7 +1106,7 @@ p.subtitle {
   transform: scale(1.06);
 }
 .plus-sign {
-  font-size: 32px;
+  font-size: 35px;
   font-weight: 400;
   line-height: 1;
 }
@@ -1144,7 +1144,7 @@ p.subtitle {
   gap: 5px;
   color: var(--color-secondary);
   font-family: var(--font-main);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: color var(--transition-fast);
@@ -1194,7 +1194,7 @@ p.subtitle {
   padding: 12px 16px;
   box-shadow: var(--shadow-lg);
   color: var(--color-primary);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -1212,7 +1212,7 @@ p.subtitle {
   background: none;
   border: none;
   color: var(--color-secondary);
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
   margin-left: 10px;
 }
@@ -1261,18 +1261,18 @@ p.subtitle {
   margin-bottom: 16px;
 }
 .modal-header h4 {
-  font-size: 21px;
+  font-size: 23px;
   font-weight: 800;
 }
 .close-btn {
   background: none;
   border: none;
   color: var(--color-secondary);
-  font-size: 28px;
+  font-size: 31px;
   cursor: pointer;
 }
 .modal-subtitle {
-  font-size: 15px;
+  font-size: 17px;
   color: var(--color-secondary);
   margin-top: -8px;
   margin-bottom: 20px;
@@ -1286,7 +1286,7 @@ p.subtitle {
   gap: 6px;
 }
 .input-group label {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--color-secondary);
   letter-spacing: 0.5px;
@@ -1298,7 +1298,7 @@ p.subtitle {
   color: var(--color-primary);
   padding: 12px;
   font-family: var(--font-main);
-  font-size: 16px;
+  font-size: 18px;
   outline: none;
 }
 .premium-input:focus {
@@ -1324,10 +1324,10 @@ p.subtitle {
   width: 40%;
 }
 .flag-icon-large {
-  font-size: 46px;
+  font-size: 51px;
 }
 .predict-team-name {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
 }
 .score-input {
@@ -1338,7 +1338,7 @@ p.subtitle {
   border-radius: 12px;
   color: var(--color-primary);
   font-family: var(--font-main);
-  font-size: 28px;
+  font-size: 31px;
   font-weight: 800;
   text-align: center;
   outline: none;
@@ -1355,7 +1355,7 @@ p.subtitle {
 }
 
 .predict-vs {
-  font-size: 23px;
+  font-size: 25px;
   font-weight: 900;
   color: var(--color-secondary);
 }
@@ -1409,7 +1409,7 @@ p.subtitle {
 }
 
 .auth-logo {
-  font-size: 37px;
+  font-size: 41px;
   font-weight: 900;
   letter-spacing: 2px;
   color: var(--color-primary);
@@ -1422,7 +1422,7 @@ p.subtitle {
 }
 
 .auth-subtitle {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: 3px;
   color: var(--color-secondary);
@@ -1442,7 +1442,7 @@ p.subtitle {
 
 .auth-toggle-wrapper {
   margin-top: 20px;
-  font-size: 15px;
+  font-size: 17px;
   color: var(--color-secondary);
   display: flex;
   align-items: center;
@@ -1451,7 +1451,7 @@ p.subtitle {
 
 .sandbox-indicator {
   margin-top: 36px;
-  font-size: 12px;
+  font-size: 13px;
   color: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.05);
   padding: 4px 10px;
@@ -1475,16 +1475,16 @@ p.subtitle {
   gap: 12px;
 }
 .warning-icon {
-  font-size: 23px;
+  font-size: 25px;
   filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.4));
 }
 .pending-banner-content strong {
-  font-size: 15px;
+  font-size: 17px;
   color: #f59e0b;
   display: block;
 }
 .pending-banner-content p {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--color-secondary);
   margin-top: 2px;
 }
@@ -1517,16 +1517,16 @@ p.subtitle {
   gap: 2px;
 }
 .admin-user-info .name {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--color-primary);
 }
 .admin-user-info .email {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--color-secondary);
 }
 .admin-user-info .points {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--color-accent);
   margin-top: 2px;
   font-weight: 600;
@@ -1537,7 +1537,7 @@ p.subtitle {
   gap: 10px;
 }
 .status-badge {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   padding: 4px 8px;
   border-radius: 8px;
@@ -1558,7 +1558,7 @@ p.subtitle {
 }
 .btn-status-toggle {
   padding: 6px 12px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   border-radius: 8px;
   cursor: pointer;

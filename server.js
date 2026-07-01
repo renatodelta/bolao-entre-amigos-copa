@@ -281,7 +281,7 @@ app.post('/api/protected/admin/users/toggle-status', async (c) => {
 // 8. UPDATE MATCH AND RECALCULATE POINTS (Admin only)
 app.post('/api/protected/admin/matches/update', async (c) => {
   const userId = c.get('userId');
-  const { matchId, homeTeam, homeAbbrev, homeFlag, awayTeam, awayAbbrev, awayFlag, homeScore, awayScore, status } = await c.req.json();
+  const { matchId, homeTeam, homeAbbrev, homeFlag, awayTeam, awayAbbrev, awayFlag, homeScore, awayScore, status, time, startTime } = await c.req.json();
   const db = c.env?.DB;
 
   if (!db) {
@@ -303,9 +303,10 @@ app.post('/api/protected/admin/matches/update', async (c) => {
       `UPDATE matches SET 
         home_team = ?, home_abbrev = ?, home_flag = ?, 
         away_team = ?, away_abbrev = ?, away_flag = ?, 
-        home_score = ?, away_score = ?, status = ?
+        home_score = ?, away_score = ?, status = ?,
+        time = ?, start_time = ?
        WHERE id = ?`
-    ).bind(homeTeam, homeAbbrev, homeFlag, awayTeam, awayAbbrev, awayFlag, homeScoreVal, awayScoreVal, status, matchId).run();
+    ).bind(homeTeam, homeAbbrev, homeFlag, awayTeam, awayAbbrev, awayFlag, homeScoreVal, awayScoreVal, status, time, startTime, matchId).run();
 
     // Recalculate Points, Accuracy, and Rankings for all users
     const { results: users } = await db.prepare("SELECT id FROM users").all();

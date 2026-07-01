@@ -694,6 +694,14 @@ function openAdminMatchModal(matchId) {
 
   document.getElementById("admin-status-select").value = m.status;
 
+  // Load Date/Time Fields
+  document.getElementById("admin-time-input").value = m.time || "";
+  let rawStartTime = m.startTime || "";
+  if (rawStartTime) {
+    rawStartTime = rawStartTime.replace(" ", "T").substring(0, 16);
+  }
+  document.getElementById("admin-start-time-input").value = rawStartTime;
+
   adminMatchModal.classList.add("open");
 }
 
@@ -725,10 +733,18 @@ async function saveAdminMatchDetails() {
   const awayScore = awayScoreRaw !== "" ? parseInt(awayScoreRaw) : null;
 
   const status = document.getElementById("admin-status-select").value;
+  const time = document.getElementById("admin-time-input").value;
+  const startTimeVal = document.getElementById("admin-start-time-input").value;
 
   if (status === "completed" && (homeScore === null || awayScore === null)) {
     showToast("A partida só pode ser finalizada se houver placar cadastrado.", "warning");
     return;
+  }
+
+  // Format startTime (YYYY-MM-DDTHH:MM -> YYYY-MM-DD HH:MM:00)
+  let startTime = startTimeVal;
+  if (startTimeVal && startTimeVal.includes("T")) {
+    startTime = startTimeVal.replace("T", " ") + ":00";
   }
 
   try {
@@ -738,7 +754,9 @@ async function saveAdminMatchDetails() {
         homeTeam, homeAbbrev, homeFlag,
         awayTeam, awayAbbrev, awayFlag,
         homeScore, awayScore,
-        status
+        status,
+        time,
+        startTime
       });
       await initAppContent();
     } else {
@@ -753,6 +771,8 @@ async function saveAdminMatchDetails() {
         state.matches[mIdx].homeScore = homeScore;
         state.matches[mIdx].awayScore = awayScore;
         state.matches[mIdx].status = status;
+        state.matches[mIdx].time = time;
+        state.matches[mIdx].startTime = startTime;
       }
       
       if (status === "completed") {
@@ -815,6 +835,7 @@ async function loadMatchesData() {
         awayFlag: m.away_flag,
         status: m.status,
         time: m.time,
+        startTime: m.start_time,
         homeScore: m.home_score,
         awayScore: m.away_score,
         realTimeMinute: m.id === "m1" ? 62 : null,

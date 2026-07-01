@@ -715,6 +715,17 @@
             <option value="completed">Finalizado (Completed)</option>
           </select>
         </div>
+
+        <!-- Date and Time of the match -->
+        <div class="input-group">
+          <label for="admin-time-input">Texto de Exibição da Data (Ex: 01 JUL • 13:00)</label>
+          <input type="text" id="admin-time-input" class="premium-input" placeholder="01 JUL • 13:00">
+        </div>
+
+        <div class="input-group">
+          <label for="admin-start-time-input">Data/Hora de Início (Limite para Palpites)</label>
+          <input type="datetime-local" id="admin-start-time-input" class="premium-input">
+        </div>
       </div>
       <div class="modal-footer" style="flex-shrink: 0; margin-top: 0; padding-top: 10px;">
         <button class="btn btn-secondary" id="cancel-admin-match-btn">Cancelar</button>

@@ -136,9 +136,9 @@ app.get('/api/matches', async (c) => {
   const db = c.env?.DB;
   if (!db) {
     return c.json([
-      { id: "m1", homeTeam: "Brasil", homeAbbrev: "BRA", homeFlag: "🇧🇷", awayTeam: "EUA", awayAbbrev: "USA", awayFlag: "🇺🇸", status: "live", time: "15 JUN • 21:00", homeScore: 1, awayScore: 0, realTimeMinute: 62 },
-      { id: "m2", homeTeam: "Argentina", homeAbbrev: "ARG", homeFlag: "🇦🇷", awayTeam: "França", awayAbbrev: "FRA", awayFlag: "🇫🇷", status: "upcoming", time: "16 JUN • 16:00", homeScore: null, awayScore: null },
-      { id: "m3", homeTeam: "Alemanha", homeAbbrev: "GER", homeFlag: "🇩🇪", awayTeam: "Espanha", awayAbbrev: "ESP", awayFlag: "🇪🇸", status: "upcoming", time: "17 JUN • 19:00", homeScore: null, awayScore: null },
+      { id: "m1", homeTeam: "Brasil", homeAbbrev: "BRA", homeFlag: "🇧🇷", awayTeam: "EUA", awayAbbrev: "USA", awayFlag: "🇺🇸", status: "completed", time: "15 JUN • Finalizado", homeScore: 2, awayScore: 1 },
+      { id: "m2", homeTeam: "Argentina", homeAbbrev: "ARG", homeFlag: "🇦🇷", awayTeam: "França", awayAbbrev: "FRA", awayFlag: "🇫🇷", status: "completed", time: "16 JUN • Finalizado", homeScore: 1, awayScore: 1 },
+      { id: "m3", homeTeam: "Alemanha", homeAbbrev: "GER", homeFlag: "🇩🇪", awayTeam: "Espanha", awayAbbrev: "ESP", awayFlag: "🇪🇸", status: "completed", time: "17 JUN • Finalizado", homeScore: 0, awayScore: 2 },
       { id: "m4", homeTeam: "Itália", homeAbbrev: "ITA", homeFlag: "🇮🇹", awayTeam: "Inglaterra", awayAbbrev: "ENG", awayFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", status: "completed", time: "14 JUN • Finalizado", homeScore: 2, awayScore: 1 }
     ]);
   }

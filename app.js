@@ -211,42 +211,41 @@ const DEFAULT_STATE = {
   user: null, 
   predictions: {}, 
   matches: [
-    { id: "m1", homeTeam: "Brasil", homeAbbrev: "BRA", homeFlag: "🇧🇷", awayTeam: "EUA", awayAbbrev: "USA", awayFlag: "🇺🇸", status: "live", time: "15 JUN • 21:00", homeScore: 1, awayScore: 0, realTimeMinute: 62, resultCalculated: false },
-    { id: "m2", homeTeam: "Argentina", homeAbbrev: "ARG", homeFlag: "🇦🇷", awayTeam: "França", awayAbbrev: "FRA", awayFlag: "🇫🇷", status: "upcoming", time: "16 JUN • 16:00", homeScore: null, awayScore: null },
-    { id: "m3", homeTeam: "Alemanha", homeAbbrev: "GER", homeFlag: "🇩🇪", awayTeam: "Espanha", awayAbbrev: "ESP", awayFlag: "🇪🇸", status: "upcoming", time: "17 JUN • 19:00", homeScore: null, awayScore: null },
+    { id: "m1", homeTeam: "Brasil", homeAbbrev: "BRA", homeFlag: "🇧🇷", awayTeam: "EUA", awayAbbrev: "USA", awayFlag: "🇺🇸", status: "completed", time: "15 JUN • Finalizado", homeScore: 2, awayScore: 1, realTimeMinute: 90, resultCalculated: true },
+    { id: "m2", homeTeam: "Argentina", homeAbbrev: "ARG", homeFlag: "🇦🇷", awayTeam: "França", awayAbbrev: "FRA", awayFlag: "🇫🇷", status: "completed", time: "16 JUN • Finalizado", homeScore: 1, awayScore: 1 },
+    { id: "m3", homeTeam: "Alemanha", homeAbbrev: "GER", homeFlag: "🇩🇪", awayTeam: "Espanha", awayAbbrev: "ESP", awayFlag: "🇪🇸", status: "completed", time: "17 JUN • Finalizado", homeScore: 0, awayScore: 2 },
     { id: "m4", homeTeam: "Itália", homeAbbrev: "ITA", homeFlag: "🇮🇹", awayTeam: "Inglaterra", awayAbbrev: "ENG", awayFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", status: "completed", time: "14 JUN • Finalizado", homeScore: 2, awayScore: 1 },
-    { id: "m5", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "28 JUN • 16:00", homeScore: null, awayScore: null },
-    { id: "m6", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "29 JUN • 14:00", homeScore: null, awayScore: null },
-    { id: "m7", homeTeam: "Alemanha", homeAbbrev: "GER", homeFlag: "🇩🇪", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "29 JUN • 17:30", homeScore: null, awayScore: null },
-    { id: "m8", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "29 JUN • 22:00", homeScore: null, awayScore: null },
-    { id: "m9", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "30 JUN • 14:00", homeScore: null, awayScore: null },
-    { id: "m10", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "30 JUN • 18:00", homeScore: null, awayScore: null },
-    { id: "m11", homeTeam: "México", homeAbbrev: "MEX", homeFlag: "🇲🇽", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "30 JUN • 22:00", homeScore: null, awayScore: null },
-    { id: "m12", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "01 JUL • 13:00", homeScore: null, awayScore: null },
-    { id: "m13", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "01 JUL • 17:00", homeScore: null, awayScore: null },
-    { id: "m14", homeTeam: "Estados Unidos", homeAbbrev: "USA", homeFlag: "🇺🇸", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "01 JUL • 21:00", homeScore: null, awayScore: null },
-    { id: "m15", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "02 JUL • 16:00", homeScore: null, awayScore: null },
-    { id: "m16", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "02 JUL • 20:00", homeScore: null, awayScore: null },
-    { id: "m17", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "03 JUL • 00:00", homeScore: null, awayScore: null },
-    { id: "m18", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "03 JUL • 15:00", homeScore: null, awayScore: null },
-    { id: "m19", homeTeam: "Argentina", homeAbbrev: "ARG", homeFlag: "🇦🇷", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "03 JUL • 19:00", homeScore: null, awayScore: null },
-    { id: "m20", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "03 JUL • 22:30", homeScore: null, awayScore: null },
-    { id: "m21", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "04 JUL • 14:00", homeScore: null, awayScore: null },
-    { id: "m22", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "04 JUL • 18:00", homeScore: null, awayScore: null },
-    { id: "m23", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "05 JUL • 17:00", homeScore: null, awayScore: null },
-    { id: "m24", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "05 JUL • 21:00", homeScore: null, awayScore: null },
-    { id: "m25", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "06 JUL • 16:00", homeScore: null, awayScore: null },
-    { id: "m26", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "06 JUL • 21:00", homeScore: null, awayScore: null },
-    { id: "m27", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "07 JUL • 13:00", homeScore: null, awayScore: null },
-    { id: "m28", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "07 JUL • 17:00", homeScore: null, awayScore: null },
-    { id: "m29", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "09 JUL • 17:00", homeScore: null, awayScore: null },
-    { id: "m30", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "10 JUL • 16:00", homeScore: null, awayScore: null },
-    { id: "m31", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "11 JUL • 18:00", homeScore: null, awayScore: null },
-    { id: "m32", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "11 JUL • 22:00", homeScore: null, awayScore: null },
-    { id: "m33", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "14 JUL • 16:00", homeScore: null, awayScore: null },
-    { id: "m34", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "15 JUL • 16:00", homeScore: null, awayScore: null },
-    { id: "m35", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "18 JUL • 18:00", homeScore: null, awayScore: null },
-    { id: "m36", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "19 JUL • 16:00", homeScore: null, awayScore: null }
+    { id: "m5", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "completed", time: "28 JUN • Finalizado", homeScore: 1, awayScore: 0 },
+    { id: "m6", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "completed", time: "29 JUN • Finalizado", homeScore: 0, awayScore: 0 },
+    { id: "m7", homeTeam: "Alemanha", homeAbbrev: "GER", homeFlag: "🇩🇪", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "completed", time: "29 JUN • Finalizado", homeScore: 3, awayScore: 1 },
+    { id: "m8", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "completed", time: "29 JUN • Finalizado", homeScore: 1, awayScore: 2 },
+    { id: "m9", homeTeam: "Costa do Marfim", homeAbbrev: "CIV", homeFlag: "🇨🇮", awayTeam: "Noruega", awayAbbrev: "NOR", awayFlag: "🇳🇴", status: "upcoming", time: "30 JUN • 18:00", homeScore: null, awayScore: null },
+    { id: "m10", homeTeam: "França", homeAbbrev: "FRA", homeFlag: "🇫🇷", awayTeam: "Suécia", awayAbbrev: "SWE", awayFlag: "🇸🇪", status: "upcoming", time: "30 JUN • 22:00", homeScore: null, awayScore: null },
+    { id: "m11", homeTeam: "México", homeAbbrev: "MEX", homeFlag: "🇲🇽", awayTeam: "Equador", awayAbbrev: "ECU", awayFlag: "🇪🇨", status: "upcoming", time: "01 JUL • 13:00", homeScore: null, awayScore: null },
+    { id: "m12", homeTeam: "Inglaterra", homeAbbrev: "ENG", homeFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", awayTeam: "RD Congo", awayAbbrev: "COD", awayFlag: "🇨🇩", status: "upcoming", time: "01 JUL • 17:00", homeScore: null, awayScore: null },
+    { id: "m13", homeTeam: "Bélgica", homeAbbrev: "BEL", homeFlag: "🇧🇪", awayTeam: "Senegal", awayAbbrev: "SEN", awayFlag: "🇸🇳", status: "upcoming", time: "01 JUL • 21:00", homeScore: null, awayScore: null },
+    { id: "m14", homeTeam: "Estados Unidos", homeAbbrev: "USA", homeFlag: "🇺🇸", awayTeam: "Bósnia e Herzegovina", awayAbbrev: "BIH", awayFlag: "🇧🇦", status: "upcoming", time: "02 JUL • 16:00", homeScore: null, awayScore: null },
+    { id: "m15", homeTeam: "Espanha", homeAbbrev: "ESP", homeFlag: "🇪🇸", awayTeam: "Áustria", awayAbbrev: "AUT", awayFlag: "🇦🇹", status: "upcoming", time: "02 JUL • 20:00", homeScore: null, awayScore: null },
+    { id: "m16", homeTeam: "Portugal", homeAbbrev: "POR", homeFlag: "🇵🇹", awayTeam: "Croácia", awayAbbrev: "CRO", awayFlag: "🇭🇷", status: "upcoming", time: "03 JUL • 00:00", homeScore: null, awayScore: null },
+    { id: "m17", homeTeam: "Suíça", homeAbbrev: "SUI", homeFlag: "🇨🇭", awayTeam: "Argélia", awayAbbrev: "ALG", awayFlag: "🇩🇿", status: "upcoming", time: "03 JUL • 15:00", homeScore: null, awayScore: null },
+    { id: "m18", homeTeam: "Austrália", homeAbbrev: "AUS", homeFlag: "🇦🇺", awayTeam: "Egito", awayAbbrev: "EGY", awayFlag: "🇪🇬", status: "upcoming", time: "03 JUL • 19:00", homeScore: null, awayScore: null },
+    { id: "m19", homeTeam: "Argentina", homeAbbrev: "ARG", homeFlag: "🇦🇷", awayTeam: "Cabo Verde", awayAbbrev: "CPV", awayFlag: "🇨🇻", status: "upcoming", time: "03 JUL • 22:30", homeScore: null, awayScore: null },
+    { id: "m20", homeTeam: "Colômbia", homeAbbrev: "COL", homeFlag: "🇨🇴", awayTeam: "Gana", awayAbbrev: "GHA", awayFlag: "🇬🇭", status: "upcoming", time: "04 JUL • 14:00", homeScore: null, awayScore: null },
+    { id: "m21", homeTeam: "Canadá", homeAbbrev: "CAN", homeFlag: "🇨🇦", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "04 JUL • 18:00", homeScore: null, awayScore: null },
+    { id: "m22", homeTeam: "Paraguai", homeAbbrev: "PAR", homeFlag: "🇵🇾", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "05 JUL • 17:00", homeScore: null, awayScore: null },
+    { id: "m23", homeTeam: "Brasil", homeAbbrev: "BRA", homeFlag: "🇧🇷", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "05 JUL • 21:00", homeScore: null, awayScore: null },
+    { id: "m24", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "06 JUL • 16:00", homeScore: null, awayScore: null },
+    { id: "m25", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "06 JUL • 21:00", homeScore: null, awayScore: null },
+    { id: "m26", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "07 JUL • 13:00", homeScore: null, awayScore: null },
+    { id: "m27", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "07 JUL • 17:00", homeScore: null, awayScore: null },
+    { id: "m28", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "09 JUL • 17:00", homeScore: null, awayScore: null },
+    { id: "m29", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "10 JUL • 16:00", homeScore: null, awayScore: null },
+    { id: "m30", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "11 JUL • 18:00", homeScore: null, awayScore: null },
+    { id: "m31", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "11 JUL • 22:00", homeScore: null, awayScore: null },
+    { id: "m32", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "14 JUL • 16:00", homeScore: null, awayScore: null },
+    { id: "m33", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "15 JUL • 16:00", homeScore: null, awayScore: null },
+    { id: "m34", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "18 JUL • 18:00", homeScore: null, awayScore: null },
+    { id: "m35", homeTeam: "A definir", homeAbbrev: "ADF", homeFlag: "🏳️", awayTeam: "A definir", awayAbbrev: "ADF", awayFlag: "🏳️", status: "upcoming", time: "19 JUL • 16:00", homeScore: null, awayScore: null }
   ],
   rankings: {
     global: [
@@ -280,7 +279,33 @@ function loadState() {
       state = JSON.parse(saved);
       state.matches = DEFAULT_STATE.matches.map(defaultMatch => {
         const savedMatch = state.matches.find(m => m.id === defaultMatch.id);
-        return savedMatch ? { ...defaultMatch, ...savedMatch } : defaultMatch;
+        if (savedMatch) {
+          if (defaultMatch.status === "completed") {
+            return { 
+              ...savedMatch, 
+              homeTeam: defaultMatch.homeTeam,
+              homeAbbrev: defaultMatch.homeAbbrev,
+              homeFlag: defaultMatch.homeFlag,
+              awayTeam: defaultMatch.awayTeam,
+              awayAbbrev: defaultMatch.awayAbbrev,
+              awayFlag: defaultMatch.awayFlag,
+              status: "completed", 
+              homeScore: defaultMatch.homeScore, 
+              awayScore: defaultMatch.awayScore, 
+              time: defaultMatch.time, 
+              resultCalculated: true 
+            };
+          }
+          return { 
+            ...defaultMatch, 
+            status: savedMatch.status,
+            homeScore: savedMatch.homeScore,
+            awayScore: savedMatch.awayScore,
+            realTimeMinute: savedMatch.realTimeMinute,
+            resultCalculated: savedMatch.resultCalculated
+          };
+        }
+        return defaultMatch;
       });
     } catch (e) {
       state = JSON.parse(JSON.stringify(DEFAULT_STATE));
@@ -616,6 +641,7 @@ async function loadAdminMatches() {
   adminMatchesListContainer.innerHTML = "";
   
   state.matches.forEach(m => {
+    if (["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8"].includes(m.id)) return;
     const card = document.createElement("div");
     card.className = "admin-user-card";
     
@@ -1209,6 +1235,9 @@ function renderMatchesList(filter = "all") {
   matchesListContainer.innerHTML = "";
   
   const filteredMatches = state.matches.filter(m => {
+    if (["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8"].includes(m.id)) {
+      return false;
+    }
     if (filter === "pending") {
       return m.status === "upcoming" || (m.status === "live" && !state.predictions[m.id]);
     }
@@ -1313,7 +1342,8 @@ function renderMatchesList(filter = "all") {
 }
 
 function updateFeaturedMatchCard() {
-  const featured = state.matches.find(m => m.status === "live") || state.matches[0];
+  const visibleMatches = state.matches.filter(m => !["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8"].includes(m.id));
+  const featured = visibleMatches.find(m => m.status === "live") || visibleMatches.find(m => m.status === "upcoming") || visibleMatches[0];
   if (!featured) return;
   
   const statusBadge = document.getElementById("featured-status-badge");

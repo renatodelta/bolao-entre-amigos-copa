@@ -297,6 +297,15 @@ app.post('/api/protected/admin/matches/update', async (c) => {
 
     const homeScoreVal = homeScore !== null && homeScore !== undefined && homeScore !== '' ? parseInt(homeScore) : null;
     const awayScoreVal = awayScore !== null && awayScore !== undefined && awayScore !== '' ? parseInt(awayScore) : null;
+    const homeTeamVal = homeTeam !== undefined && homeTeam !== '' ? homeTeam : null;
+    const homeAbbrevVal = homeAbbrev !== undefined && homeAbbrev !== '' ? homeAbbrev : null;
+    const homeFlagVal = homeFlag !== undefined && homeFlag !== '' ? homeFlag : null;
+    const awayTeamVal = awayTeam !== undefined && awayTeam !== '' ? awayTeam : null;
+    const awayAbbrevVal = awayAbbrev !== undefined && awayAbbrev !== '' ? awayAbbrev : null;
+    const awayFlagVal = awayFlag !== undefined && awayFlag !== '' ? awayFlag : null;
+    const statusVal = status !== undefined && status !== '' ? status : null;
+    const timeVal = time !== undefined && time !== '' ? time : null;
+    const startTimeVal = startTime !== undefined && startTime !== '' ? startTime : null;
 
     // Update match info
     await db.prepare(
@@ -306,7 +315,12 @@ app.post('/api/protected/admin/matches/update', async (c) => {
         home_score = ?, away_score = ?, status = ?,
         time = ?, start_time = ?
        WHERE id = ?`
-    ).bind(homeTeam, homeAbbrev, homeFlag, awayTeam, awayAbbrev, awayFlag, homeScoreVal, awayScoreVal, status, time, startTime, matchId).run();
+    ).bind(
+      homeTeamVal, homeAbbrevVal, homeFlagVal, 
+      awayTeamVal, awayAbbrevVal, awayFlagVal, 
+      homeScoreVal, awayScoreVal, statusVal, 
+      timeVal, startTimeVal, matchId
+    ).run();
 
     // Recalculate Points, Accuracy, and Rankings for all users
     const { results: users } = await db.prepare("SELECT id FROM users").all();

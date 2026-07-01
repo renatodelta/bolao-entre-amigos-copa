@@ -753,12 +753,17 @@ async function saveAdminMatchDetails() {
     if (isApiActive) {
       await apiRequest("/api/protected/admin/matches/update", "POST", {
         matchId: currentEditingAdminMatchId,
-        homeTeam, homeAbbrev, homeFlag,
-        awayTeam, awayAbbrev, awayFlag,
-        homeScore, awayScore,
-        status,
-        time,
-        startTime
+        homeTeam: homeTeam || null,
+        homeAbbrev: homeAbbrev || null,
+        homeFlag: homeFlag || null,
+        awayTeam: awayTeam || null,
+        awayAbbrev: awayAbbrev || null,
+        awayFlag: awayFlag || null,
+        homeScore: homeScore !== undefined ? homeScore : null,
+        awayScore: awayScore !== undefined ? awayScore : null,
+        status: status || null,
+        time: time || null,
+        startTime: startTime || null
       });
       await initAppContent();
     } else {

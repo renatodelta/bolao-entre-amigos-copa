@@ -356,6 +356,32 @@ app.post('/api/protected/admin/matches/update', async (c) => {
   }
 });
 
+// 9. DELETE MATCH (Admin only)
+app.delete('/api/protected/admin/matches/:matchId', async (c) => {
+  const userId = c.get('userId');
+  const matchId = c.req.param('matchId');
+  const db = c.env?.DB;
+
+  if (!db) {
+    return c.json({ success: true, message: 'Match deleted in Mock Mode' });
+  }
+
+  try {
+    // Verify user is admin
+    const caller = await db.prepare('SELECT is_admin FROM users WHERE id = ?').bind(userId).first();
+    if (!caller || caller.is_admin !== 1) {
+      return c.json({ error: 'Acesso negado: Requer privilégios de administrador' }, 403);
+    }
+
+    // Delete match
+    await db.prepare('DELETE FROM matches WHERE id = ?').bind(matchId).run();
+
+    return c.json({ success: true });
+  } catch (err) {
+    return c.json({ error: err.message }, 500);
+  }
+});
+
 // --- CRON TRIGGER TRANSPARENCY BROADCASTER ---
 async function handleCronTrigger(env) {
   const db = env.DB;

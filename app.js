@@ -658,14 +658,19 @@ async function loadAdminMatches() {
         <span class="email">${m.time}</span>
         <span class="points" style="color:var(--color-primary); font-size: 13px;">Placar: <strong>${homeScoreDisplay} x ${awayScoreDisplay}</strong></span>
       </div>
-      <div class="admin-user-actions" style="gap: 8px;">
+      <div class="admin-user-actions" style="gap: 8px; display: flex; align-items: center;">
         <span class="status-badge ${statusClass}" style="font-size: 8px;">${statusText}</span>
         <button class="btn-status-toggle edit-match-action" data-match-id="${m.id}" style="padding: 4px 10px; font-size: 10px;">Editar</button>
+        <button class="btn-status-toggle delete-match-action" data-match-id="${m.id}" style="padding: 4px 10px; font-size: 10px; background-color: var(--color-danger); color: white; border: none;">Excluir</button>
       </div>
     `;
 
     card.querySelector(".edit-match-action").addEventListener("click", () => {
       openAdminMatchModal(m.id);
+    });
+
+    card.querySelector(".delete-match-action").addEventListener("click", () => {
+      deleteAdminMatch(m.id);
     });
 
     adminMatchesListContainer.appendChild(card);
@@ -814,6 +819,27 @@ async function saveAdminMatchDetails() {
     showToast("Partida atualizada com sucesso!", "success");
   } catch (err) {
     showToast("Erro ao salvar partida: " + err.message, "danger");
+  }
+}
+
+async function deleteAdminMatch(matchId) {
+  if (!confirm("Tem certeza que deseja excluir esta partida? Todos os palpites relacionados a ela também serão excluídos.")) {
+    return;
+  }
+
+  try {
+    if (isApiActive) {
+      await apiRequest(`/api/protected/admin/matches/${matchId}`, "DELETE");
+    } else {
+      state.matches = state.matches.filter(m => m.id !== matchId);
+      delete state.predictions[matchId];
+      saveState();
+    }
+
+    showToast("Partida excluída com sucesso!", "success");
+    await initAppContent();
+  } catch (err) {
+    showToast("Erro ao excluir partida: " + err.message, "danger");
   }
 }
 

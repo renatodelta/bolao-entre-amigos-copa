@@ -227,6 +227,25 @@ app.post('/api/protected/predictions', async (c) => {
   }
 });
 
+// 4b. GET USER PREDICTIONS
+app.get('/api/protected/predictions', async (c) => {
+  const userId = c.get('userId');
+  const db = c.env?.DB;
+
+  if (!db) {
+    return c.json([]); // Empty array in Mock Mode - localStorage is used instead
+  }
+
+  try {
+    const { results } = await db.prepare(
+      'SELECT match_id, home_score, away_score FROM predictions WHERE user_id = ?'
+    ).bind(userId).all();
+    return c.json(results);
+  } catch (err) {
+    return c.json({ error: err.message }, 500);
+  }
+});
+
 // 5. GET LEADERBOARD (Only Global Group remains)
 app.get('/api/protected/rankings/:groupId', async (c) => {
   const db = c.env?.DB;

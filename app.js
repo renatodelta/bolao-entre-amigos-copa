@@ -21,11 +21,17 @@ function getFlagHtml(abbrev, fallbackEmoji = "") {
   if (!abbrev || abbrev === "ADF") {
     return `<span class="flag-placeholder">🏳️</span>`;
   }
+  // First try 3-letter FIFA code lookup
   const iso = FIFA_TO_ISO[abbrev.toUpperCase()];
   if (iso) {
     return `<img src="https://flagcdn.com/w40/${iso}.png" alt="${abbrev}" class="flag-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" /><span class="flag-emoji-fallback" style="display:none;">${fallbackEmoji}</span>`;
   }
-  return `<span>${fallbackEmoji}</span>`;
+  // Fallback: treat abbrev itself as an ISO 2-letter code (e.g. 'ec', 'ch', 'au')
+  const raw = abbrev.toLowerCase();
+  if (/^[a-z]{2}(-[a-z]+)?$/.test(raw)) {
+    return `<img src="https://flagcdn.com/w40/${raw}.png" alt="${abbrev}" class="flag-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" /><span class="flag-emoji-fallback" style="display:none;">${fallbackEmoji}</span>`;
+  }
+  return `<span>${fallbackEmoji || abbrev}</span>`;
 }
 
 // Helper for custom confirmation modal instead of browser's ugly native alerts
@@ -929,6 +935,18 @@ async function loadMatchesData() {
       }));
     } catch (e) {
       console.warn("Could not load matches from API, using cached/local matches", e);
+    }
+
+    // Load user predictions from server and restore into local state
+    try {
+      const preds = await apiRequest("/api/protected/predictions");
+      if (Array.isArray(preds)) {
+        preds.forEach(p => {
+          state.predictions[p.match_id] = { homeScore: p.home_score, awayScore: p.away_score };
+        });
+      }
+    } catch (e) {
+      console.warn("Could not load predictions from API", e);
     }
   }
 }

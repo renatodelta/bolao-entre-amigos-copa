@@ -4,34 +4,34 @@
 
 /* Design Tokens & CSS Variables */
 :root {
-  /* Colors */
-  --bg-body: #010918;
-  --bg-shell: #03122c;
-  --bg-shell-gradient: linear-gradient(180deg, #03122c 0%, #071939 100%);
-  --bg-card: rgba(12, 34, 76, 0.7);
-  --bg-card-hover: rgba(18, 47, 102, 0.85);
-  --bg-input: #08193a;
-  --bg-header: rgba(3, 18, 44, 0.85);
-  --bg-nav: rgba(3, 18, 44, 0.85);
-  --border-header: rgba(255, 255, 255, 0.05);
-  --border-nav: rgba(255, 255, 255, 0.05);
-  --bg-modal: #041635;
-  --bg-modal-overlay: rgba(1, 9, 24, 0.75);
-  --featured-gradient: linear-gradient(180deg, rgba(3, 18, 44, 0.4) 0%, rgba(3, 18, 44, 0.85) 100%), 
-                        radial-gradient(ellipse at center, rgba(16, 185, 129, 0.1) 0%, rgba(3, 18, 44, 0) 70%);
+  /* Colors - High Fidelity Neon Theme */
+  --bg-body: #020205;
+  --bg-shell: #090e1a;
+  --bg-shell-gradient: linear-gradient(180deg, #070b16 0%, #111827 100%);
+  --bg-card: rgba(17, 24, 39, 0.6);
+  --bg-card-hover: rgba(31, 41, 55, 0.8);
+  --bg-input: #0b0f19;
+  --bg-header: rgba(9, 14, 26, 0.85);
+  --bg-nav: rgba(9, 14, 26, 0.85);
+  --border-header: rgba(0, 242, 254, 0.15);
+  --border-nav: rgba(0, 242, 254, 0.15);
+  --bg-modal: #0b1329;
+  --bg-modal-overlay: rgba(2, 2, 5, 0.85);
+  --featured-gradient: linear-gradient(180deg, rgba(7, 11, 22, 0.3) 0%, rgba(7, 11, 22, 0.9) 100%), 
+                        radial-gradient(ellipse at center, rgba(0, 242, 254, 0.15) 0%, rgba(7, 11, 22, 0) 75%);
   
   --color-primary: #ffffff;
-  --color-secondary: #94a3b8;
-  --color-accent: #ffd000;
-  --color-accent-hover: #e5bb00;
+  --color-secondary: #9ca3af;
+  --color-accent: #00f2fe; /* Cyber Neon Cyan */
+  --color-accent-hover: #00b4fe;
   
   --color-success: #10b981;
   --color-danger: #ef4444;
   --color-warning: #f59e0b;
-  --color-live: #ff5e5e;
+  --color-live: #ff2a5f; /* Vibrant Neon Magenta */
   
-  --border-color: rgba(30, 64, 175, 0.4);
-  --border-color-glow: rgba(251, 191, 36, 0.5);
+  --border-color: rgba(0, 242, 254, 0.2);
+  --border-color-glow: rgba(0, 242, 254, 0.5);
   
   /* Font Stack */
   --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -42,15 +42,15 @@
   --nav-height: 72px;
   
   /* Transitions */
-  --transition-fast: 0.2s ease;
-  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   
   /* Shadows */
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35);
-  --shadow-gold: 0 0 15px rgba(255, 208, 0, 0.25);
-  --shadow-glow-active: 0 0 20px rgba(30, 64, 175, 0.3);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 16px rgba(0, 242, 254, 0.08);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --shadow-gold: 0 0 15px rgba(0, 242, 254, 0.25);
+  --shadow-glow-active: 0 0 20px rgba(0, 242, 254, 0.25);
 }
 
 /* Hero Theme Variables Switch (Superhero Vibe) */

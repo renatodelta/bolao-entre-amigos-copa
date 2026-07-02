@@ -6,7 +6,7 @@ compatibility_date = "2026-06-23"
 [[d1_databases]]
 binding = "DB" # Available inside worker as c.env.DB
 database_name = "bolao_d1"
-database_id = "0e8d6efc-538e-4e99-b3ba-f6467f391e91" # Replace with real uuid after creating it via: wrangler d1 create bolao_d1
+database_id = "2d304b7d-d9d1-4f62-9ad8-786c80a575a7" # Replace with real uuid after creating it via: wrangler d1 create bolao_d1
 migrations_dir = "./"
 
 [triggers]

@@ -3,19 +3,19 @@
   "name": "Bolão Copa 2026",
   "icons": [
     {
-      "src": "public/avatar.jpg",
-      "type": "image/jpeg",
+      "src": "public/app-icon.png",
+      "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "public/avatar.jpg",
-      "type": "image/jpeg",
+      "src": "public/app-icon.png",
+      "type": "image/png",
       "sizes": "512x512"
     }
   ],
   "start_url": "index.html",
-  "background_color": "#03122c",
+  "background_color": "#eef2f5",
   "display": "standalone",
-  "theme_color": "#03122c",
+  "theme_color": "#004d40",
   "orientation": "portrait"
 }

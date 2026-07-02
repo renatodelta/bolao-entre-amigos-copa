@@ -1,9 +1,10 @@
-const CACHE_NAME = "bolao-2026-v7";
+const CACHE_NAME = "bolao-2026-v8";
 const ASSETS = [
   "index.html",
   "style.css",
   "app.js",
   "manifest.json",
+  "public/app-icon.png",
   "public/avatar.jpg",
   "public/avatar1.jpg",
   "public/avatar2.jpg"

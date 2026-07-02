@@ -3,7 +3,7 @@
    ========================================================================== */
 
 // --- DUAL MODE CONFIGURATION ---
-const API_BASE_URL = "https://bolao-api.dominguesrds29.workers.dev";
+const API_BASE_URL = "https://bolao-api.renatodelta.workers.dev";
 let isApiActive = false; // Toggled dynamically on initial connection check
 
 // Mock database inside LocalStorage for fallback testing
@@ -208,8 +208,8 @@ const DEFAULT_MOCK_USERS_DB = [
 
 // --- INITIAL STATE ---
 const DEFAULT_STATE = {
-  user: null, 
-  predictions: {}, 
+  user: null,
+  predictions: {},
   matches: [
     { id: "m1", homeTeam: "África do Sul", homeAbbrev: "RSA", homeFlag: "🇿🇦", awayTeam: "Canadá", awayAbbrev: "CAN", awayFlag: "🇨🇦", status: "completed", time: "28 JUN • Finalizado", homeScore: 0, awayScore: 1 },
     { id: "m2", homeTeam: "Países Baixos", homeAbbrev: "NED", homeFlag: "🇳🇱", awayTeam: "Marrocos", awayAbbrev: "MAR", awayFlag: "🇲🇦", status: "completed", time: "29 JUN • Finalizado", homeScore: 1, awayScore: 1 },
@@ -278,23 +278,23 @@ function loadState() {
         const savedMatch = state.matches.find(m => m.id === defaultMatch.id);
         if (savedMatch) {
           if (defaultMatch.status === "completed") {
-            return { 
-              ...savedMatch, 
+            return {
+              ...savedMatch,
               homeTeam: defaultMatch.homeTeam,
               homeAbbrev: defaultMatch.homeAbbrev,
               homeFlag: defaultMatch.homeFlag,
               awayTeam: defaultMatch.awayTeam,
               awayAbbrev: defaultMatch.awayAbbrev,
               awayFlag: defaultMatch.awayFlag,
-              status: "completed", 
-              homeScore: defaultMatch.homeScore, 
-              awayScore: defaultMatch.awayScore, 
-              time: defaultMatch.time, 
-              resultCalculated: true 
+              status: "completed",
+              homeScore: defaultMatch.homeScore,
+              awayScore: defaultMatch.awayScore,
+              time: defaultMatch.time,
+              resultCalculated: true
             };
           }
-          return { 
-            ...defaultMatch, 
+          return {
+            ...defaultMatch,
             status: savedMatch.status,
             homeScore: savedMatch.homeScore,
             awayScore: savedMatch.awayScore,
@@ -470,12 +470,12 @@ async function handleAuthSubmit() {
       }
     } else {
       const usersDB = loadMockUsersDB();
-      
+
       if (isSignupMode) {
         if (usersDB.some(u => u.email === email)) {
           throw new Error("E-mail já cadastrado.");
         }
-        
+
         const newMockId = `mock_${Date.now()}`;
         const newMockUser = {
           id: newMockId,
@@ -490,10 +490,10 @@ async function handleAuthSubmit() {
           is_admin: 0,
           notificationsEnabled: true
         };
-        
+
         usersDB.push(newMockUser);
         saveMockUsersDB(usersDB);
-        
+
         localStorage.setItem("bolao_auth_token", "mock-token-" + newMockId);
         state.user = newMockUser;
       } else {
@@ -501,7 +501,7 @@ async function handleAuthSubmit() {
         if (!found) {
           throw new Error("E-mail ou senha inválidos.");
         }
-        
+
         localStorage.setItem("bolao_auth_token", "mock-token-" + found.id);
         state.user = found;
       }
@@ -510,7 +510,7 @@ async function handleAuthSubmit() {
     saveState();
     appShellContainer.classList.remove("auth-required");
     showToast(`Bem-vindo, ${state.user.name}!`, "success");
-    
+
     initAppContent();
   } catch (err) {
     showToast(err.message || "Erro na autenticação", "danger");
@@ -536,7 +536,7 @@ function handleLogout() {
 // --- ADMIN USERS RETRIEVAL & RENDER ---
 async function loadAdminUsers() {
   adminUsersListContainer.innerHTML = "";
-  
+
   try {
     let usersList = [];
     if (isApiActive) {
@@ -545,22 +545,22 @@ async function loadAdminUsers() {
       // Mock mode LocalStorage retrieval
       usersList = loadMockUsersDB();
     }
-    
+
     if (usersList.length === 0) {
       adminUsersListContainer.innerHTML = "<p style='color: var(--color-secondary); text-align: center; padding: 20px;'>Nenhum usuário cadastrado.</p>";
       return;
     }
-    
+
     usersList.forEach(u => {
       // Don't show admin toggle for oneself
       if (u.id === state.user.id) return;
-      
+
       const card = document.createElement("div");
       card.className = "admin-user-card";
-      
+
       const badgeClass = u.status === "approved" ? "approved" : "pending";
       const badgeText = u.status === "approved" ? "Liberado" : "Pendente";
-      
+
       let actionBtnHtml = "";
       if (u.is_admin === 1) {
         actionBtnHtml = "<span style='font-size: 11px; color: var(--color-secondary); font-weight: 700;'>ADMIN</span>";
@@ -569,7 +569,7 @@ async function loadAdminUsers() {
       } else {
         actionBtnHtml = `<button class="btn-status-toggle approve-action" data-user-id="${u.id}" data-action="approved">Liberar Acesso</button>`;
       }
-      
+
       card.innerHTML = `
         <div class="admin-user-info">
           <span class="name">${u.name}</span>
@@ -581,18 +581,18 @@ async function loadAdminUsers() {
           ${actionBtnHtml}
         </div>
       `;
-      
+
       // Bind toggle status event click
       const actionBtn = card.querySelector(".btn-status-toggle");
       if (actionBtn) {
         actionBtn.addEventListener("click", async () => {
           const targetUserId = actionBtn.dataset.userId;
           const nextStatus = actionBtn.dataset.action;
-          
+
           await toggleUserStatus(targetUserId, nextStatus);
         });
       }
-      
+
       adminUsersListContainer.appendChild(card);
     });
   } catch (err) {
@@ -611,7 +611,7 @@ async function toggleUserStatus(targetUserId, nextStatus) {
       if (userIdx !== -1) {
         db[userIdx].status = nextStatus;
         saveMockUsersDB(db);
-        
+
         // Also update local rankings if necessary
         const globalRankItem = state.rankings.global.find(item => item.name === db[userIdx].name);
         if (globalRankItem) {
@@ -619,10 +619,10 @@ async function toggleUserStatus(targetUserId, nextStatus) {
         }
       }
     }
-    
+
     showToast("Status do usuário atualizado com sucesso!", "success");
     loadAdminUsers();
-    
+
     // Refresh global ranking list in case an approval affects points displays
     renderLeaderboard("global");
   } catch (err) {
@@ -633,12 +633,12 @@ async function toggleUserStatus(targetUserId, nextStatus) {
 // --- ADMIN MATCHES RETRIEVAL & RENDER ---
 async function loadAdminMatches() {
   adminMatchesListContainer.innerHTML = "";
-  
+
   state.matches.forEach(m => {
     if (["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8"].includes(m.id)) return;
     const card = document.createElement("div");
     card.className = "admin-user-card";
-    
+
     let statusText = "Agendado";
     let statusClass = "pending";
     if (m.status === "live") {
@@ -684,10 +684,10 @@ function openAdminMatchModal(matchId) {
   if (!m) return;
 
   currentEditingAdminMatchId = matchId;
-  
+
   const homeSelect = document.getElementById("admin-home-select");
   const awaySelect = document.getElementById("admin-away-select");
-  
+
   setSelectedValue(homeSelect, m.homeTeam, m.homeAbbrev, m.homeFlag);
   setSelectedValue(awaySelect, m.awayTeam, m.awayAbbrev, m.awayFlag);
 
@@ -721,7 +721,7 @@ function setSelectedValue(selectEl, name, abbrev, flag) {
 async function saveAdminMatchDetails() {
   const homeVal = document.getElementById("admin-home-select").value;
   const awayVal = document.getElementById("admin-away-select").value;
-  
+
   const [homeNameSlug, homeAbbrev, homeFlag] = homeVal.split('|');
   const [awayNameSlug, awayAbbrev, awayFlag] = awayVal.split('|');
 
@@ -730,7 +730,7 @@ async function saveAdminMatchDetails() {
 
   const homeScoreRaw = document.getElementById("admin-home-score").value;
   const awayScoreRaw = document.getElementById("admin-away-score").value;
-  
+
   const homeScore = homeScoreRaw !== "" ? parseInt(homeScoreRaw) : null;
   const awayScore = awayScoreRaw !== "" ? parseInt(awayScoreRaw) : null;
 
@@ -781,15 +781,15 @@ async function saveAdminMatchDetails() {
         state.matches[mIdx].time = time;
         state.matches[mIdx].startTime = startTime;
       }
-      
+
       if (status === "completed") {
         const usersDB = loadMockUsersDB();
-        
+
         usersDB.forEach(u => {
           let points = 0;
           let correct = 0;
           let predictedCount = 0;
-          
+
           state.matches.forEach(match => {
             if (match.status === "completed") {
               const pred = state.predictions[match.id];
@@ -801,7 +801,7 @@ async function saveAdminMatchDetails() {
               }
             }
           });
-          
+
           u.points = points;
           u.accuracy = predictedCount > 0 ? Math.round((correct / predictedCount) * 100) : 0;
         });
@@ -903,7 +903,7 @@ function updateProfileUI() {
   if (!u) return;
 
   const pointsFormatted = new Intl.NumberFormat('pt-BR').format(u.points);
-  
+
   welcomeName.textContent = "Seu Desempenho";
   homeTotalPoints.textContent = pointsFormatted;
   homeAccuracy.textContent = `${u.accuracy}%`;
@@ -1110,7 +1110,7 @@ function renderRankingChart() {
             stepSize: 1,
             color: "#94a3b8",
             font: { family: "Outfit", size: 10 },
-            callback: function(value) { return value + "º"; }
+            callback: function (value) { return value + "º"; }
           },
           grid: { color: "rgba(255, 255, 255, 0.05)" }
         }
@@ -1126,7 +1126,7 @@ function renderRankingChart() {
         },
         tooltip: {
           callbacks: {
-            label: function(context) {
+            label: function (context) {
               return context.dataset.label + ": " + context.raw + "º Lugar";
             }
           }
@@ -1159,7 +1159,7 @@ function renderLeaderboard(groupId = "global") {
       userRankItem.name = state.user.name;
     }
   }
-  
+
   rankingList.sort((a, b) => b.points - a.points);
 
   // Update currentUser globalRank in state and local storage DB if mock mode
@@ -1168,7 +1168,7 @@ function renderLeaderboard(groupId = "global") {
     const newRank = currentLeaderboardIndex + 1;
     state.user.globalRank = newRank;
     saveState();
-    
+
     if (!isApiActive) {
       const db = loadMockUsersDB();
       const uIdx = db.findIndex(u => u.id === state.user.id);
@@ -1181,7 +1181,7 @@ function renderLeaderboard(groupId = "global") {
   }
 
   fullLeaderboardList.innerHTML = "";
-  
+
   rankingList.forEach((player, index) => {
     const pos = index + 1;
     let trendIcon = "";
@@ -1192,7 +1192,7 @@ function renderLeaderboard(groupId = "global") {
     } else {
       trendIcon = `<span style="font-size: 14px; font-weight: bold; color: var(--color-secondary);">—</span>`;
     }
-    
+
     let posClass = "";
     if (pos === 1) posClass = "pos-1";
     else if (pos === 2) posClass = "pos-2";
@@ -1213,7 +1213,7 @@ function renderLeaderboard(groupId = "global") {
     `;
     fullLeaderboardList.appendChild(row);
   });
-  
+
   renderRankingChart();
 }
 
@@ -1232,12 +1232,12 @@ function renderHomeRankingPreview() {
   } else {
     rankingList = [...(state.rankings.global || [])];
   }
-  
+
   rankingList.sort((a, b) => b.points - a.points);
-  
+
   const top2 = rankingList.slice(0, 2);
   homeRankingPreviewContainer.innerHTML = "";
-  
+
   top2.forEach((player, index) => {
     const pos = index + 1;
     let trendIcon = "";
@@ -1248,7 +1248,7 @@ function renderHomeRankingPreview() {
     } else {
       trendIcon = `<span style="font-size: 14px; font-weight: bold; color: var(--color-secondary);">—</span>`;
     }
-    
+
     let posClass = "";
     if (pos === 1) posClass = "pos-1";
     else if (pos === 2) posClass = "pos-2";
@@ -1268,18 +1268,18 @@ function renderHomeRankingPreview() {
       </div>
       <div>${trendIcon}</div>
     `;
-    
+
     card.addEventListener("click", () => {
       switchTab("view-ranking");
     });
-    
+
     homeRankingPreviewContainer.appendChild(card);
   });
 }
 
 function renderMatchesList(filter = "all") {
   matchesListContainer.innerHTML = "";
-  
+
   const filteredMatches = state.matches.filter(m => {
     if (["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8"].includes(m.id)) {
       return false;
@@ -1292,17 +1292,17 @@ function renderMatchesList(filter = "all") {
     }
     return true;
   });
-  
+
   if (filteredMatches.length === 0) {
     matchesListContainer.innerHTML = `<div class="empty-state" style="text-align: center; color: var(--color-secondary); padding: 40px 20px;">Nenhuma partida encontrada para este filtro.</div>`;
     return;
   }
-  
+
   filteredMatches.forEach(m => {
     const card = document.createElement("div");
     card.className = "match-card";
     card.dataset.matchId = m.id;
-    
+
     let statusLabel = "";
     if (m.status === "live") {
       statusLabel = `<span class="match-status-label live">● AO VIVO (${m.realTimeMinute}')</span>`;
@@ -1311,10 +1311,10 @@ function renderMatchesList(filter = "all") {
     } else {
       statusLabel = `<span class="match-status-label">${m.time}</span>`;
     }
-    
+
     const userPred = state.predictions[m.id];
     let predictionBarHtml = "";
-    
+
     if (m.status === "completed") {
       if (userPred) {
         const gainedPoints = getPointsAwarded(userPred.homeScore, userPred.awayScore, m.homeScore, m.awayScore);
@@ -1376,13 +1376,13 @@ function renderMatchesList(filter = "all") {
       </div>
       ${predictionBarHtml}
     `;
-    
+
     if (m.status !== "completed") {
       card.addEventListener("click", () => {
         openPredictionModal(m.id);
       });
     }
-    
+
     matchesListContainer.appendChild(card);
   });
 }
@@ -1391,7 +1391,7 @@ function updateFeaturedMatchCard() {
   const visibleMatches = state.matches.filter(m => !["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8"].includes(m.id));
   const featured = visibleMatches.find(m => m.status === "live") || visibleMatches.find(m => m.status === "upcoming") || visibleMatches[0];
   if (!featured) return;
-  
+
   const statusBadge = document.getElementById("featured-status-badge");
   if (featured.status === "live") {
     statusBadge.textContent = `● AO VIVO (${featured.realTimeMinute}')`;
@@ -1407,13 +1407,13 @@ function updateFeaturedMatchCard() {
   document.getElementById("featured-home-abbrev").textContent = featured.homeAbbrev;
   document.getElementById("featured-away-flag").textContent = featured.awayFlag;
   document.getElementById("featured-away-abbrev").textContent = featured.awayAbbrev;
-  
-  const formattedTime = featured.status === "live" 
-    ? `Placar Atual: ${featured.homeScore} x ${featured.awayScore}` 
+
+  const formattedTime = featured.status === "live"
+    ? `Placar Atual: ${featured.homeScore} x ${featured.awayScore}`
     : featured.time;
-    
+
   document.getElementById("featured-match-time").textContent = formattedTime;
-  
+
   const featuredBtn = document.getElementById("featured-palpitar-btn");
   if (featured.status === "completed") {
     featuredBtn.innerHTML = `VER DETALHES <span class="arrow">→</span>`;
@@ -1440,13 +1440,13 @@ function openPredictionModal(matchId) {
 
   const m = state.matches.find(item => item.id === matchId);
   if (!m) return;
-  
+
   currentEditingMatchId = matchId;
   modalHomeFlag.textContent = m.homeFlag;
   modalHomeName.textContent = m.homeTeam;
   modalAwayFlag.textContent = m.awayFlag;
   modalAwayName.textContent = m.awayTeam;
-  
+
   const userPred = state.predictions[matchId];
   if (userPred) {
     modalHomeScore.value = userPred.homeScore;
@@ -1455,7 +1455,7 @@ function openPredictionModal(matchId) {
     modalHomeScore.value = "";
     modalAwayScore.value = "";
   }
-  
+
   predictionModal.classList.add("open");
 }
 
@@ -1470,9 +1470,9 @@ function closeAllModals() {
 function simulateLiveMatchTick() {
   const liveMatch = state.matches.find(m => m.id === "m1");
   if (!liveMatch || liveMatch.status !== "live") return;
-  
+
   liveMatch.realTimeMinute += 1;
-  
+
   if (liveMatch.realTimeMinute === 74) {
     liveMatch.homeScore = 2;
     showToast("⚽ GOL DO BRASIL! Pedro Neto amplia o placar! Brasil 2 x 0 EUA", "success");
@@ -1493,7 +1493,7 @@ function simulateLiveMatchTick() {
     liveMatch.resultCalculated = true;
     showToast("🏁 FIM DE JOGO! Brasil 2 x 1 EUA. Pontuações do bolão computadas!", "info");
     notificationBadge.style.display = "block";
-    
+
     // Add points only if approved and predicted
     if (state.user?.status === "approved") {
       const pred = state.predictions["m1"];
@@ -1509,7 +1509,7 @@ function simulateLiveMatchTick() {
         }
       }
     }
-    
+
     saveState();
     updateProfileUI();
     renderLeaderboard("global");
@@ -1531,13 +1531,13 @@ function switchTab(tabId) {
   viewPanels.forEach(panel => {
     panel.classList.remove("active");
   });
-  
+
   // Show target panel
   const targetPanel = document.getElementById(tabId);
   if (targetPanel) {
     targetPanel.classList.add("active");
   }
-  
+
   // Update nav tabs active styling
   navTabs.forEach(tab => {
     if (tab.dataset.target === tabId) {
@@ -1646,7 +1646,7 @@ function initEventListeners() {
     }
 
     state.user.name = name;
-    
+
     if (!isApiActive) {
       const usersDB = loadMockUsersDB();
       const uIdx = usersDB.findIndex(u => u.id === state.user.id);
@@ -1670,11 +1670,11 @@ function initEventListeners() {
     document.getElementById("admin-tab-matches").classList.remove("active");
     document.getElementById("admin-users-tab-content").style.display = "block";
     document.getElementById("admin-matches-tab-content").style.display = "none";
-    
+
     loadAdminUsers();
     adminModal.classList.add("open");
   });
-  
+
   document.getElementById("close-admin-modal").addEventListener("click", closeAllModals);
 
   // Admin Modal Tab Switchers
@@ -1779,7 +1779,7 @@ async function init() {
         if (!found) throw new Error("Mock token expired");
         state.user = found;
       }
-      
+
       appShellContainer.classList.remove("auth-required");
       initAppContent();
     } catch (e) {

@@ -38,6 +38,20 @@ app.use('/api/protected/*', authMiddleware);
 // Helper for generating IDs
 const generateId = () => Math.random().toString(36).substring(2, 15);
 
+// Points calculation logic (same as frontend)
+function getPointsAwarded(predHome, predAway, realHome, realAway) {
+  if (predHome === null || predAway === null || realHome === null || realAway === null) return 0;
+  if (predHome === realHome && predAway === realAway) return 10;
+  const predResult = Math.sign(predHome - predAway);
+  const realResult = Math.sign(realHome - realAway);
+  const predDiff = predHome - predAway;
+  const realDiff = realHome - realAway;
+  if (predResult === realResult && predDiff === realDiff) return 7;
+  if (predResult === realResult) return 5;
+  if (predHome === realHome || predAway === realAway) return 2;
+  return 0;
+}
+
 // --- AUTH ENDPOINTS ---
 
 // 1. REGISTER
@@ -338,16 +352,10 @@ app.post('/api/protected/admin/matches/update', async (c) => {
       const total = completedPredictions.length;
 
       for (const p of completedPredictions) {
-        if (p.pred_home === p.real_home && p.pred_away === p.real_away) {
-          points += 25; // Exact Match
+        const gained = getPointsAwarded(p.pred_home, p.pred_away, p.real_home, p.real_away);
+        points += gained;
+        if (gained > 0) {
           correct += 1;
-        } else {
-          const predResult = Math.sign(p.pred_home - p.pred_away);
-          const realResult = Math.sign(p.real_home - p.real_away);
-          if (predResult === realResult) {
-            points += 10; // Winner/Draw correct
-            correct += 1;
-          }
         }
       }
 

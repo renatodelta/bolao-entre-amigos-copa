@@ -995,14 +995,32 @@ let rankingChartInstance = null;
 
 function getPointsAwarded(predHome, predAway, realHome, realAway) {
   if (predHome === null || predAway === null || realHome === null || realAway === null) return 0;
+  
+  // 1. Placar exato
   if (predHome === realHome && predAway === realAway) {
-    return 25;
-  }
-  const predResult = Math.sign(predHome - predAway);
-  const realResult = Math.sign(realHome - realAway);
-  if (predResult === realResult) {
     return 10;
   }
+  
+  const predResult = Math.sign(predHome - predAway);
+  const realResult = Math.sign(realHome - realAway);
+  const predDiff = predHome - predAway;
+  const realDiff = realHome - realAway;
+  
+  // 2. Acertar vencedor/empate + saldo de gols
+  if (predResult === realResult && predDiff === realDiff) {
+    return 7;
+  }
+  
+  // 3. Acertar apenas o vencedor/empate
+  if (predResult === realResult) {
+    return 5;
+  }
+  
+  // 4. Acertar quantidade de gols de pelo menos um dos times
+  if (predHome === realHome || predAway === realAway) {
+    return 2;
+  }
+  
   return 0;
 }
 
@@ -1118,26 +1136,28 @@ function renderRankingChart() {
   const idsToShow = new Set(top4Ids);
   idsToShow.add(currentUserId);
 
-  const colors = ["#3b82f6", "#10b981", "#ec4899", "#a855f7", "#06b6d4"];
+  const colors = [
+    "#3b82f6", "#10b981", "#ec4899", "#a855f7", "#06b6d4",
+    "#f59e0b", "#ef4444", "#14b8a6", "#6366f1", "#f43f5e",
+    "#84cc16", "#10b981"
+  ];
   const datasets = [];
   let colorIdx = 0;
 
   users.forEach(u => {
-    if (idsToShow.has(u.id)) {
-      const isMe = u.id === currentUserId;
-      const label = isMe ? `${u.name} (Você)` : u.name;
-      datasets.push({
-        label: label,
-        data: rankHistories[u.id],
-        borderColor: isMe ? "#ffd000" : colors[colorIdx % colors.length],
-        backgroundColor: "transparent",
-        borderWidth: isMe ? 4 : 2,
-        tension: 0.3,
-        pointRadius: 4,
-        pointHoverRadius: 6
-      });
-      if (!isMe) colorIdx++;
-    }
+    const isMe = u.id === currentUserId;
+    const label = isMe ? `${u.name} (Você)` : u.name;
+    datasets.push({
+      label: label,
+      data: rankHistories[u.id],
+      borderColor: isMe ? "#ffd000" : colors[colorIdx % colors.length],
+      backgroundColor: "transparent",
+      borderWidth: isMe ? 4 : 2,
+      tension: 0.3,
+      pointRadius: 4,
+      pointHoverRadius: 6
+    });
+    if (!isMe) colorIdx++;
   });
 
   if (rankingChartInstance) {

@@ -6,6 +6,30 @@
 const API_BASE_URL = "https://bolao-api.renatodelta.workers.dev";
 let isApiActive = false; // Toggled dynamically on initial connection check
 
+// Helper to render flag images (FlagCDN) instead of unicode emojis on unsupported OSes (like Windows)
+function getFlagHtml(flagEmoji) {
+  if (!flagEmoji || flagEmoji === "🏳️" || flagEmoji === "🏳") {
+    return `<span class="flag-placeholder">🏳️</span>`;
+  }
+  
+  if (flagEmoji.includes("🏴") || flagEmoji.includes("🏴󠁧󠁢󠁥󠁮󠁧󠁿")) {
+    return `<img src="https://flagcdn.com/w40/gb-eng.png" alt="${flagEmoji}" class="flag-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" /><span class="flag-emoji-fallback" style="display:none;">${flagEmoji}</span>`;
+  }
+
+  if (flagEmoji.length >= 4) {
+    const charCodeAtZero = flagEmoji.codePointAt(0);
+    const charCodeAtTwo = flagEmoji.codePointAt(2);
+    if (charCodeAtZero >= 0x1F1E6 && charCodeAtZero <= 0x1F1FF &&
+        charCodeAtTwo >= 0x1F1E6 && charCodeAtTwo <= 0x1F1FF) {
+      const code = String.fromCharCode(charCodeAtZero - 0x1F1E6 + 65) + String.fromCharCode(charCodeAtTwo - 0x1F1E6 + 65);
+      const iso = code.toLowerCase();
+      return `<img src="https://flagcdn.com/w40/${iso}.png" alt="${flagEmoji}" class="flag-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" /><span class="flag-emoji-fallback" style="display:none;">${flagEmoji}</span>`;
+    }
+  }
+
+  return `<span>${flagEmoji}</span>`;
+}
+
 // Mock database inside LocalStorage for fallback testing
 const DEFAULT_MOCK_USERS_DB = [
   {
@@ -654,7 +678,7 @@ async function loadAdminMatches() {
 
     card.innerHTML = `
       <div class="admin-user-info" style="gap: 4px;">
-        <span class="name" style="font-size:12px;">${m.homeFlag} ${m.homeTeam} vs ${m.awayTeam} ${m.awayFlag}</span>
+        <span class="name" style="font-size:12px; display: flex; align-items: center; gap: 4px;">${getFlagHtml(m.homeFlag)} ${m.homeTeam} vs ${m.awayTeam} ${getFlagHtml(m.awayFlag)}</span>
         <span class="email">${m.time}</span>
         <span class="points" style="color:var(--color-primary); font-size: 13px;">Placar: <strong>${homeScoreDisplay} x ${awayScoreDisplay}</strong></span>
       </div>
@@ -1361,7 +1385,7 @@ function renderMatchesList(filter = "all") {
       </div>
       <div class="match-score-row">
         <div class="match-team">
-          <span class="match-team-flag">${m.homeFlag}</span>
+          <span class="match-team-flag">${getFlagHtml(m.homeFlag)}</span>
           <span class="match-team-name">${m.homeTeam}</span>
         </div>
         <div class="match-scores-middle">
@@ -1371,7 +1395,7 @@ function renderMatchesList(filter = "all") {
         </div>
         <div class="match-team team-away">
           <span class="match-team-name">${m.awayTeam}</span>
-          <span class="match-team-flag">${m.awayFlag}</span>
+          <span class="match-team-flag">${getFlagHtml(m.awayFlag)}</span>
         </div>
       </div>
       ${predictionBarHtml}
@@ -1403,9 +1427,9 @@ function updateFeaturedMatchCard() {
     statusBadge.style.display = "none";
   }
 
-  document.getElementById("featured-home-flag").textContent = featured.homeFlag;
+  document.getElementById("featured-home-flag").innerHTML = getFlagHtml(featured.homeFlag);
   document.getElementById("featured-home-abbrev").textContent = featured.homeAbbrev;
-  document.getElementById("featured-away-flag").textContent = featured.awayFlag;
+  document.getElementById("featured-away-flag").innerHTML = getFlagHtml(featured.awayFlag);
   document.getElementById("featured-away-abbrev").textContent = featured.awayAbbrev;
 
   const formattedTime = featured.status === "live"
@@ -1442,9 +1466,9 @@ function openPredictionModal(matchId) {
   if (!m) return;
 
   currentEditingMatchId = matchId;
-  modalHomeFlag.textContent = m.homeFlag;
+  modalHomeFlag.innerHTML = getFlagHtml(m.homeFlag);
   modalHomeName.textContent = m.homeTeam;
-  modalAwayFlag.textContent = m.awayFlag;
+  modalAwayFlag.innerHTML = getFlagHtml(m.awayFlag);
   modalAwayName.textContent = m.awayTeam;
 
   const userPred = state.predictions[matchId];

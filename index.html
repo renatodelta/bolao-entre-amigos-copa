@@ -119,73 +119,77 @@
           </div>
         </div>
 
-        <div class="welcome-banner">
-          <span class="banner-sub">BEM-VINDO, CRAQUE!</span>
-          <h2 class="banner-title" id="welcome-name">Seu Desempenho</h2>
-        </div>
+        <div class="desktop-home-grid">
+          <div class="main-column">
+            <div class="welcome-banner">
+              <span class="banner-sub">BEM-VINDO, CRAQUE!</span>
+              <h2 class="banner-title" id="welcome-name">Seu Desempenho</h2>
+            </div>
 
-        <!-- Mini Stats Grid -->
-        <div class="mini-stats-grid">
-          <div class="mini-stat-card">
-            <span class="mini-stat-label">PONTOS TOTAIS</span>
-            <span class="mini-stat-value" id="home-total-points">1.240</span>
-          </div>
-          <div class="mini-stat-card">
-            <span class="mini-stat-label">ACURÁCIA</span>
-            <span class="mini-stat-value" id="home-accuracy">68%</span>
-          </div>
-        </div>
-
-        <!-- Highlight Live/Upcoming Match Card -->
-        <div class="featured-match-container" id="featured-match-card">
-          <div class="featured-match-bg"></div>
-          <div class="featured-match-content">
-            <div class="match-badge-live" id="featured-status-badge">● AO VIVO</div>
-            <div class="teams-versus-display">
-              <div class="team-block">
-                <div class="team-flag-wrapper">
-                  <span class="flag-icon" id="featured-home-flag">🇧🇷</span>
-                </div>
-                <span class="team-abbrev" id="featured-home-abbrev">BRA</span>
+            <!-- Mini Stats Grid -->
+            <div class="mini-stats-grid">
+              <div class="mini-stat-card">
+                <span class="mini-stat-label">PONTOS TOTAIS</span>
+                <span class="mini-stat-value" id="home-total-points">1.240</span>
               </div>
-              
-              <div class="vs-divider">
-                <span class="vs-text">VS</span>
-              </div>
-              
-              <div class="team-block">
-                <div class="team-flag-wrapper">
-                  <span class="flag-icon" id="featured-away-flag">🇺🇸</span>
-                </div>
-                <span class="team-abbrev" id="featured-away-abbrev">USA</span>
+              <div class="mini-stat-card">
+                <span class="mini-stat-label">ACURÁCIA</span>
+                <span class="mini-stat-value" id="home-accuracy">68%</span>
               </div>
             </div>
-            
-            <div class="match-datetime" id="featured-match-time">15 JUN • 21:00</div>
-            
-            <button class="btn btn-primary btn-gold font-bold ripple" id="featured-palpitar-btn">
-              PALPITAR AGORA <span class="arrow">→</span>
-            </button>
-          </div>
-        </div>
 
-        <!-- Meus Grupos removed -->
-
-        <!-- Top Ranking Preview -->
-        <div class="section-container">
-          <div class="section-header">
-            <h3>Top Ranking</h3>
-            <svg class="trophy-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
-              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
-              <path d="M4 22h16"></path>
-              <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"></path>
-              <path d="M12 2a6 6 0 0 0-6 6v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V8a6 6 0 0 0-6-6z"></path>
-            </svg>
+            <!-- Highlight Live/Upcoming Match Card -->
+            <div class="featured-match-container" id="featured-match-card">
+              <div class="featured-match-bg"></div>
+              <div class="featured-match-content">
+                <div class="match-badge-live" id="featured-status-badge">● AO VIVO</div>
+                <div class="teams-versus-display">
+                  <div class="team-block">
+                    <div class="team-flag-wrapper">
+                      <span class="flag-icon" id="featured-home-flag">🇧🇷</span>
+                    </div>
+                    <span class="team-abbrev" id="featured-home-abbrev">BRA</span>
+                  </div>
+                  
+                  <div class="vs-divider">
+                    <span class="vs-text">VS</span>
+                  </div>
+                  
+                  <div class="team-block">
+                    <div class="team-flag-wrapper">
+                      <span class="flag-icon" id="featured-away-flag">🇺🇸</span>
+                    </div>
+                    <span class="team-abbrev" id="featured-away-abbrev">USA</span>
+                  </div>
+                </div>
+                
+                <div class="match-datetime" id="featured-match-time">15 JUN • 21:00</div>
+                
+                <button class="btn btn-primary btn-gold font-bold ripple" id="featured-palpitar-btn">
+                  PALPITAR AGORA <span class="arrow">→</span>
+                </button>
+              </div>
+            </div>
           </div>
-          
-          <div class="ranking-preview-list" id="home-ranking-preview-container">
-            <!-- Will be generated dynamically -->
+
+          <div class="sidebar-column">
+            <!-- Top Ranking Preview -->
+            <div class="section-container" style="margin-top: 0;">
+              <div class="section-header">
+                <h3>Top Ranking</h3>
+                <svg class="trophy-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                  <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                  <path d="M4 22h16"></path>
+                  <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"></path>
+                  <path d="M12 2a6 6 0 0 0-6 6v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V8a6 6 0 0 0-6-6z"></path>
+                </svg>
+              </div>
+              
+              <div class="ranking-preview-list" id="home-ranking-preview-container">
+                <!-- Will be generated dynamically -->
+              </div>
+            </div>
           </div>
         </div>
       </section>

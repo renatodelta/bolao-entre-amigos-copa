@@ -28,6 +28,38 @@ function getFlagHtml(abbrev, fallbackEmoji = "") {
   return `<span>${fallbackEmoji}</span>`;
 }
 
+// Helper for custom confirmation modal instead of browser's ugly native alerts
+function showConfirm(title, message) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("confirm-modal");
+    document.getElementById("confirm-title").textContent = title;
+    document.getElementById("confirm-message").textContent = message;
+    
+    const onCancel = () => {
+      cleanup();
+      resolve(false);
+    };
+    
+    const onAccept = () => {
+      cleanup();
+      resolve(true);
+    };
+    
+    const cleanup = () => {
+      modal.classList.remove("open");
+      document.getElementById("confirm-cancel-btn").removeEventListener("click", onCancel);
+      document.getElementById("confirm-accept-btn").removeEventListener("click", onAccept);
+      document.getElementById("close-confirm-modal").removeEventListener("click", onCancel);
+    };
+    
+    document.getElementById("confirm-cancel-btn").addEventListener("click", onCancel);
+    document.getElementById("confirm-accept-btn").addEventListener("click", onAccept);
+    document.getElementById("close-confirm-modal").addEventListener("click", onCancel);
+    
+    modal.classList.add("open");
+  });
+}
+
 // Mock database inside LocalStorage for fallback testing
 const DEFAULT_MOCK_USERS_DB = [
   {
@@ -542,8 +574,9 @@ async function handleAuthSubmit() {
   }
 }
 
-function handleLogout() {
-  if (confirm("Deseja mesmo sair da sua conta?")) {
+async function handleLogout() {
+  const confirmed = await showConfirm("Sair da Conta", "Deseja mesmo sair da sua conta?");
+  if (confirmed) {
     localStorage.removeItem("bolao_auth_token");
     localStorage.removeItem("bolao_2026_state");
     state.user = null;
@@ -849,7 +882,11 @@ async function saveAdminMatchDetails() {
 }
 
 async function deleteAdminMatch(matchId) {
-  if (!confirm("Tem certeza que deseja excluir esta partida? Todos os palpites relacionados a ela também serão excluídos.")) {
+  const confirmed = await showConfirm(
+    "Excluir Partida",
+    "Tem certeza que deseja excluir esta partida? Todos os palpites relacionados a ela também serão excluídos."
+  );
+  if (!confirmed) {
     return;
   }
 

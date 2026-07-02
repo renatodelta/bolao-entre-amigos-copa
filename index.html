@@ -740,6 +740,23 @@
     </div>
   </div>
 
+  <!-- 4. CUSTOM CONFIRM MODAL -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal-card confirm-modal-card" style="text-align: center;">
+      <div class="modal-header" style="justify-content: center; position: relative;">
+        <h4 id="confirm-title" style="font-size: 20px;">Confirmação</h4>
+        <button class="close-btn" id="close-confirm-modal" style="position: absolute; right: 0;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 10px 0 20px 0;">
+        <p id="confirm-message" style="color: var(--color-secondary); font-size: 15px; line-height: 1.5;"></p>
+      </div>
+      <div class="modal-footer" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: none; padding-top: 0; margin-top: 0;">
+        <button class="btn btn-secondary" id="confirm-cancel-btn">Cancelar</button>
+        <button class="btn btn-primary btn-gold" id="confirm-accept-btn">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Javascript Core Logic -->
   <script src="app.js"></script>
 </body>

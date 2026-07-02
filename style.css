@@ -1617,6 +1617,21 @@ p.subtitle {
   flex-shrink: 0;
 }
 
+/* Custom Confirm Modal styling */
+#confirm-modal {
+  align-items: center;
+}
+#confirm-modal .modal-card {
+  width: 90%;
+  max-width: 400px;
+  border-radius: 24px;
+  border-bottom: 1px solid var(--border-color);
+  transform: scale(0.9) translateY(0);
+}
+#confirm-modal.open .modal-card {
+  transform: scale(1);
+}
+
 /* ==========================================================================
    DESKTOP RESPONSIVENESS AND PREMIUM VIEWPORT
    ========================================================================== */

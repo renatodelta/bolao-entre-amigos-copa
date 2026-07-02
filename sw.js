@@ -1,4 +1,4 @@
-const CACHE_NAME = "bolao-2026-v2";
+const CACHE_NAME = "bolao-2026-v4";
 const ASSETS = [
   "index.html",
   "style.css",

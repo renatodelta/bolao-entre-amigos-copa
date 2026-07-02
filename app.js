@@ -692,50 +692,152 @@ async function toggleUserStatus(targetUserId, nextStatus) {
 }
 
 // --- ADMIN MATCHES RETRIEVAL & RENDER ---
+// --- ADMIN MATCHES RETRIEVAL & RENDER ---
 async function loadAdminMatches() {
   adminMatchesListContainer.innerHTML = "";
 
   state.matches.forEach(m => {
     if (["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8"].includes(m.id)) return;
     const card = document.createElement("div");
-    card.className = "admin-user-card";
-
-    let statusText = "Agendado";
-    let statusClass = "pending";
-    if (m.status === "live") {
-      statusText = "Ao Vivo";
-      statusClass = "approved";
-    } else if (m.status === "completed") {
-      statusText = "Finalizado";
-      statusClass = "approved";
-    }
-
-    const homeScoreDisplay = m.homeScore !== null ? m.homeScore : "-";
-    const awayScoreDisplay = m.awayScore !== null ? m.awayScore : "-";
+    card.className = "admin-user-card admin-match-inline-card";
+    card.style.flexDirection = "column";
+    card.style.alignItems = "stretch";
+    card.style.padding = "16px";
+    card.style.gap = "12px";
 
     card.innerHTML = `
-      <div class="admin-user-info" style="gap: 4px;">
-        <span class="name" style="font-size:12px; display: flex; align-items: center; gap: 4px;">${getFlagHtml(m.homeAbbrev, m.homeFlag)} ${m.homeTeam} vs ${m.awayTeam} ${getFlagHtml(m.awayAbbrev, m.awayFlag)}</span>
-        <span class="email">${m.time}</span>
-        <span class="points" style="color:var(--color-primary); font-size: 13px;">Placar: <strong>${homeScoreDisplay} x ${awayScoreDisplay}</strong></span>
-      </div>
-      <div class="admin-user-actions" style="gap: 8px; display: flex; align-items: center;">
-        <span class="status-badge ${statusClass}" style="font-size: 8px;">${statusText}</span>
-        <button class="btn-status-toggle edit-match-action" data-match-id="${m.id}" style="padding: 4px 10px; font-size: 10px;">Editar</button>
-        <button class="btn-status-toggle delete-match-action" data-match-id="${m.id}" style="padding: 4px 10px; font-size: 10px; background-color: var(--color-danger); color: white; border: none;">Excluir</button>
+      <div class="admin-album-match" style="width: 100%; display: flex; flex-direction: column; gap: 12px;">
+        <div class="admin-album-teams" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+          <div class="admin-album-team home" style="display: flex; align-items: center; gap: 8px; width: 38%; min-width: 0;">
+            <div class="match-team-flag" style="font-size: 24px;">${getFlagHtml(m.homeAbbrev, m.homeFlag)}</div>
+            <span style="font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${m.homeTeam}">${m.homeTeam}</span>
+          </div>
+          
+          <div class="admin-album-inputs" style="display: flex; align-items: center; gap: 6px; justify-content: center; width: 24%;">
+            <input type="number" min="0" max="99" class="score-input admin-inline-score home-score-input" value="${m.homeScore !== null ? m.homeScore : ''}" placeholder="-" style="width: 42px; height: 38px; font-size: 18px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-input); color: white; text-align: center; font-weight: 800;">
+            <span style="font-weight: 900; color: var(--color-secondary); font-size: 14px;">x</span>
+            <input type="number" min="0" max="99" class="score-input admin-inline-score away-score-input" value="${m.awayScore !== null ? m.awayScore : ''}" placeholder="-" style="width: 42px; height: 38px; font-size: 18px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-input); color: white; text-align: center; font-weight: 800;">
+          </div>
+          
+          <div class="admin-album-team away" style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; width: 38%; min-width: 0; text-align: right;">
+            <span style="font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${m.awayTeam}">${m.awayTeam}</span>
+            <div class="match-team-flag" style="font-size: 24px;">${getFlagHtml(m.awayAbbrev, m.awayFlag)}</div>
+          </div>
+        </div>
+        
+        <div class="admin-album-meta" style="display: flex; align-items: center; justify-content: space-between; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+          <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
+            <select class="premium-select admin-inline-status" style="width: 105px; padding: 4px 18px 4px 6px; font-size: 11px; margin-bottom: 0; height: 28px; border-radius: 6px; background-size: 10px;">
+              <option value="upcoming" ${m.status === 'upcoming' ? 'selected' : ''}>Agendado</option>
+              <option value="live" ${m.status === 'live' ? 'selected' : ''}>Ao Vivo</option>
+              <option value="completed" ${m.status === 'completed' ? 'selected' : ''}>Finalizado</option>
+            </select>
+            <span style="font-size: 11px; color: var(--color-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${m.time}">${m.time}</span>
+          </div>
+          
+          <div style="display: flex; gap: 6px; flex-shrink: 0;">
+            <button class="btn btn-primary btn-gold save-inline-match-btn" style="padding: 4px 10px; font-size: 11px; border-radius: 6px; font-weight: 700; height: 28px; min-height: auto;">Salvar</button>
+            <button class="btn-status-toggle delete-match-action" style="padding: 4px 10px; font-size: 11px; background-color: var(--color-danger); color: white; border: none; border-radius: 6px; height: 28px; font-weight: 700;">Excluir</button>
+          </div>
+        </div>
       </div>
     `;
 
-    card.querySelector(".edit-match-action").addEventListener("click", () => {
-      openAdminMatchModal(m.id);
+    // Bind save inline event
+    card.querySelector(".save-inline-match-btn").addEventListener("click", async () => {
+      const homeScoreVal = card.querySelector(".home-score-input").value;
+      const awayScoreVal = card.querySelector(".away-score-input").value;
+      const statusVal = card.querySelector(".admin-inline-status").value;
+
+      const homeScore = homeScoreVal !== "" ? parseInt(homeScoreVal) : null;
+      const awayScore = awayScoreVal !== "" ? parseInt(awayScoreVal) : null;
+
+      await saveAdminMatchInline(m.id, homeScore, awayScore, statusVal);
     });
 
+    // Bind delete event
     card.querySelector(".delete-match-action").addEventListener("click", () => {
       deleteAdminMatch(m.id);
     });
 
     adminMatchesListContainer.appendChild(card);
   });
+}
+
+async function saveAdminMatchInline(matchId, homeScore, awayScore, status) {
+  const m = state.matches.find(item => item.id === matchId);
+  if (!m) return;
+
+  if (status === "completed" && (homeScore === null || awayScore === null)) {
+    showToast("A partida só pode ser finalizada se houver placar cadastrado.", "warning");
+    return;
+  }
+
+  try {
+    if (isApiActive) {
+      await apiRequest("/api/protected/admin/matches/update", "POST", {
+        matchId: matchId,
+        homeTeam: m.homeTeam,
+        homeAbbrev: m.homeAbbrev,
+        homeFlag: m.homeFlag,
+        awayTeam: m.awayTeam,
+        awayAbbrev: m.awayAbbrev,
+        awayFlag: m.awayFlag,
+        homeScore: homeScore,
+        awayScore: awayScore,
+        status: status,
+        time: m.time,
+        startTime: m.startTime
+      });
+    } else {
+      const mIdx = state.matches.findIndex(item => item.id === matchId);
+      if (mIdx !== -1) {
+        state.matches[mIdx].homeScore = homeScore;
+        state.matches[mIdx].awayScore = awayScore;
+        state.matches[mIdx].status = status;
+      }
+
+      if (status === "completed") {
+        const usersDB = loadMockUsersDB();
+
+        usersDB.forEach(u => {
+          let points = 0;
+          let correct = 0;
+          let predictedCount = 0;
+
+          state.matches.forEach(match => {
+            if (match.status === "completed") {
+              const pred = state.predictions[match.id];
+              if (pred) {
+                predictedCount++;
+                const gained = getPointsAwarded(pred.homeScore, pred.awayScore, match.homeScore, match.awayScore);
+                points += gained;
+                if (gained > 0) correct++;
+              }
+            }
+          });
+
+          u.points = points;
+          u.accuracy = predictedCount > 0 ? Math.round((correct / predictedCount) * 100) : 0;
+        });
+
+        saveMockUsersDB(usersDB);
+
+        const me = usersDB.find(u => u.id === state.user.id);
+        if (me) {
+          state.user.points = me.points;
+          state.user.accuracy = me.accuracy;
+        }
+      }
+
+      saveState();
+    }
+
+    showToast("Partida atualizada com sucesso!", "success");
+    initAppContent(); // Refresh UI in the background
+  } catch (err) {
+    showToast("Erro ao salvar partida: " + err.message, "danger");
+  }
 }
 
 let currentEditingAdminMatchId = null;

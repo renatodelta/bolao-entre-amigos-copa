@@ -1692,11 +1692,167 @@ p.subtitle {
     max-width: 850px;
   }
   
+  .modal-card.admin-modal-card {
+    max-width: 850px;
+  }
+  
   .modal-overlay.open .modal-card {
     transform: scale(1) translateY(0);
     opacity: 1;
   }
 }
+
+/* ==========================================================================
+   NUEVA INTERFACE ÉPICA Y MOBILE-FIRST (GLASSMORPHISM & ALBUM STYLING)
+   ========================================================================== */
+
+/* Glassmorphism general */
+.match-card, 
+.mini-stat-card, 
+.stat-card, 
+.leaderboard-container, 
+.welcome-banner,
+.auth-form-container,
+.settings-list,
+.achievement-badge-card {
+  background: rgba(12, 34, 76, 0.45) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4) !important;
+  border-radius: 20px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.match-card:hover, 
+.mini-stat-card:hover,
+.achievement-badge-card:hover {
+  border-color: rgba(255, 208, 0, 0.3) !important;
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 12px 40px 0 rgba(255, 208, 0, 0.1) !important;
+}
+
+/* Vibrancy in headers */
+.welcome-banner {
+  background: linear-gradient(135deg, rgba(3, 18, 44, 0.8), rgba(12, 34, 76, 0.5)) !important;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.welcome-banner::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(255,208,0,0.2) 0%, rgba(255,208,0,0) 70%);
+  pointer-events: none;
+}
+
+/* Touch targets optimization for mobile */
+@media (max-width: 991px) {
+  .btn {
+    min-height: 48px;
+    font-size: 16px;
+    border-radius: 14px;
+    letter-spacing: 0.5px;
+  }
+  
+  .nav-tab {
+    min-height: 64px;
+    padding: 10px 0;
+  }
+  
+  .filter-tab {
+    min-height: 44px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+  
+  .score-input {
+    width: 65px;
+    height: 55px;
+    font-size: 28px;
+    border-radius: 14px;
+  }
+
+  .match-scores-middle {
+    font-size: 26px;
+    gap: 8px;
+  }
+  
+  .match-team-name {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .match-team-flag {
+    font-size: 32px;
+  }
+}
+
+/* Micro-animations and feedback */
+.btn:active, 
+.nav-tab:active, 
+.match-card:active,
+.filter-tab:active,
+.achievement-badge-card:active {
+  transform: scale(0.96) !important;
+}
+
+/* Premium Gold Text details */
+.app-logo span,
+.auth-logo span,
+.vs-divider,
+.ranking-pos.pos-1 {
+  background: linear-gradient(135deg, #ffd000 0%, #ffae00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(255, 208, 0, 0.3));
+}
+
+/* Admin Album-style Matches List rendering inline */
+.admin-match-inline-card {
+  transition: all 0.25s ease;
+}
+.admin-match-inline-card:hover {
+  border-color: rgba(255, 208, 0, 0.4) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+}
+
+/* Custom styles for inline album inputs and select */
+.admin-inline-score {
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  transition: all 0.2s ease;
+}
+.admin-inline-score:focus {
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 10px rgba(255, 208, 0, 0.3) !important;
+  background-color: rgba(255,255,255,0.05) !important;
+}
+
+.admin-inline-status {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  color: white !important;
+}
+.admin-inline-status:focus {
+  border-color: var(--color-accent) !important;
+}
+
+/* Save button in inline matches */
+.save-inline-match-btn {
+  background: linear-gradient(135deg, #ffd000 0%, #f59e0b 100%) !important;
+  border: none !important;
+  color: #03122c !important;
+  box-shadow: 0 2px 8px rgba(255, 208, 0, 0.2) !important;
+}
+.save-inline-match-btn:hover {
+  background: linear-gradient(135deg, #ffae00 0%, #d97706 100%) !important;
+  box-shadow: 0 4px 12px rgba(255, 208, 0, 0.4) !important;
+}
+
 
 
 

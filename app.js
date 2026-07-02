@@ -1150,7 +1150,7 @@ function renderRankingChart() {
 
   let users = [];
   if (!isApiActive) {
-    users = loadMockUsersDB().filter(u => u.status === "approved");
+    users = loadMockUsersDB();
   } else {
     users = (state.rankings.global || []).map(r => ({
       id: r.name,
@@ -1340,7 +1340,6 @@ function renderLeaderboard(groupId = "global") {
   if (!isApiActive) {
     const db = loadMockUsersDB();
     rankingList = db
-      .filter(user => user.status === "approved") // Only display approved users in the leaderboard
       .map(user => ({
         id: user.id,
         name: user.name,
@@ -1420,7 +1419,6 @@ function renderHomeRankingPreview() {
   if (!isApiActive) {
     const db = loadMockUsersDB();
     rankingList = db
-      .filter(user => user.status === "approved")
       .map(user => ({
         name: user.name,
         avatar: user.avatar || "avatar.jpg",

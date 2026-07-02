@@ -255,7 +255,7 @@ app.get('/api/protected/rankings/:groupId', async (c) => {
   }
 
   try {
-    const { results } = await db.prepare('SELECT name, points, accuracy, id FROM users WHERE status = \'approved\' ORDER BY points DESC LIMIT 100').all();
+    const { results } = await db.prepare('SELECT name, points, accuracy, id FROM users ORDER BY points DESC LIMIT 100').all();
     return c.json(results);
   } catch (err) {
     return c.json({ error: err.message }, 500);

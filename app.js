@@ -787,7 +787,6 @@ async function saveAdminMatchDetails() {
         time: time || null,
         startTime: startTime || null
       });
-      await initAppContent();
     } else {
       const mIdx = state.matches.findIndex(m => m.id === currentEditingAdminMatchId);
       if (mIdx !== -1) {
@@ -838,12 +837,12 @@ async function saveAdminMatchDetails() {
       }
 
       saveState();
-      await initAppContent();
     }
 
     closeAllModals();
     adminMatchModal.classList.remove("open");
     showToast("Partida atualizada com sucesso!", "success");
+    initAppContent(); // Refresh UI in the background
   } catch (err) {
     showToast("Erro ao salvar partida: " + err.message, "danger");
   }
@@ -864,7 +863,7 @@ async function deleteAdminMatch(matchId) {
     }
 
     showToast("Partida excluída com sucesso!", "success");
-    await initAppContent();
+    initAppContent(); // Refresh UI in the background
   } catch (err) {
     showToast("Erro ao excluir partida: " + err.message, "danger");
   }

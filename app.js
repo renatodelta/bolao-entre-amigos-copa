@@ -1501,78 +1501,74 @@ function renderMatchesList(filter = "all") {
     card.className = "match-card";
     card.dataset.matchId = m.id;
 
-    let statusLabel = "";
-    if (m.status === "live") {
-      statusLabel = `<span class="match-status-label live">● AO VIVO (${m.realTimeMinute}')</span>`;
-    } else if (m.status === "completed") {
-      statusLabel = `<span class="match-status-label">FINALIZADO</span>`;
-    } else {
-      statusLabel = `<span class="match-status-label">${m.time}</span>`;
-    }
-
     const userPred = state.predictions[m.id];
-    let predictionBarHtml = "";
-
+    
+    // Add border status classes
     if (m.status === "completed") {
-      if (userPred) {
-        const gainedPoints = getPointsAwarded(userPred.homeScore, userPred.awayScore, m.homeScore, m.awayScore);
-        predictionBarHtml = `
-          <div class="match-prediction-bar">
-            <span class="pred-label">Seu Palpite: <strong style="color:white;">${userPred.homeScore} x ${userPred.awayScore}</strong></span>
-            <span class="prediction-points-badge">+${gainedPoints} PTS</span>
-          </div>
-        `;
-      } else {
-        predictionBarHtml = `
-          <div class="match-prediction-bar">
-            <span class="pred-label pred-empty">Sem palpite registrado</span>
-            <span class="prediction-points-badge" style="background:rgba(239, 68, 68, 0.15); color:var(--color-danger); border-color:rgba(239,68,68,0.3)">+0 PTS</span>
-          </div>
-        `;
-      }
+      card.classList.add("completed-match");
+    } else if (userPred) {
+      card.classList.add("has-prediction");
     } else {
-      if (userPred) {
-        predictionBarHtml = `
-          <div class="match-prediction-bar">
-            <span class="pred-label">Seu Palpite:</span>
-            <span class="pred-value">${userPred.homeScore} x ${userPred.awayScore}</span>
-          </div>
-        `;
-      } else {
-        const buttonText = state.user?.status === "pending" ? "Bloqueado" : "Palpitar";
-        predictionBarHtml = `
-          <div class="match-prediction-bar">
-            <span class="pred-label pred-empty">Sem palpite</span>
-            <button class="btn btn-primary btn-gold" style="padding: 4px 10px; font-size: 10px; border-radius: 6px;">${buttonText}</button>
-          </div>
-        `;
-      }
+      card.classList.add("no-prediction");
     }
 
     const homeScoreDisplay = m.homeScore !== null ? m.homeScore : "-";
     const awayScoreDisplay = m.awayScore !== null ? m.awayScore : "-";
 
+    const predHomeScore = userPred ? userPred.homeScore : "";
+    const predAwayScore = userPred ? userPred.awayScore : "";
+
+    // Badge status
+    let statusBadgeHtml = "";
+    if (m.status === "completed") {
+      const gainedPoints = userPred ? getPointsAwarded(userPred.homeScore, userPred.awayScore, m.homeScore, m.awayScore) : 0;
+      statusBadgeHtml = `<span class="badge-status badge-completed">+${gainedPoints} PTS</span>`;
+    } else if (userPred) {
+      statusBadgeHtml = `<span class="badge-status badge-saved">Palpite salvo</span>`;
+    } else {
+      statusBadgeHtml = `<span class="badge-status badge-open">Aberto</span>`;
+    }
+
+    // Prediction score displays or inputs
+    let middleScoresHtml = "";
+    if (m.status === "completed") {
+      middleScoresHtml = `
+        <div class="match-score-boxes">
+          <span class="score-box completed">${homeScoreDisplay}</span>
+          <span class="score-vs">x</span>
+          <span class="score-box completed">${awayScoreDisplay}</span>
+        </div>
+      `;
+    } else {
+      // For active/upcoming games, we can show the user's prediction directly inside input-like boxes!
+      middleScoresHtml = `
+        <div class="match-score-boxes">
+          <span class="score-box prediction">${predHomeScore !== "" ? predHomeScore : "-"}</span>
+          <span class="score-vs">x</span>
+          <span class="score-box prediction">${predAwayScore !== "" ? predAwayScore : "-"}</span>
+        </div>
+      `;
+    }
+
     card.innerHTML = `
-      <div class="match-card-header">
-        <span>Copa do Mundo 2026</span>
-        ${statusLabel}
-      </div>
-      <div class="match-score-row">
-        <div class="match-team">
-          <span class="match-team-flag">${getFlagHtml(m.homeAbbrev, m.homeFlag)}</span>
-          <span class="match-team-name">${m.homeTeam}</span>
+      <div class="match-row-container" style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 8px;">
+        <div class="match-team home" style="display: flex; align-items: center; gap: 8px; width: 38%; min-width: 0;">
+          <span class="match-team-flag" style="font-size: 24px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">${getFlagHtml(m.homeAbbrev, m.homeFlag)}</span>
+          <span class="match-team-name" style="font-size: 14px; font-weight: 700; color: var(--color-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${m.homeTeam}</span>
         </div>
-        <div class="match-scores-middle">
-          <span>${homeScoreDisplay}</span>
-          <span class="actual-score">VS</span>
-          <span>${awayScoreDisplay}</span>
-        </div>
-        <div class="match-team team-away">
-          <span class="match-team-name">${m.awayTeam}</span>
-          <span class="match-team-flag">${getFlagHtml(m.awayAbbrev, m.awayFlag)}</span>
+        
+        ${middleScoresHtml}
+        
+        <div class="match-team away" style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; width: 38%; min-width: 0; text-align: right;">
+          <span class="match-team-name" style="font-size: 14px; font-weight: 700; color: var(--color-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${m.awayTeam}</span>
+          <span class="match-team-flag" style="font-size: 24px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">${getFlagHtml(m.awayAbbrev, m.awayFlag)}</span>
         </div>
       </div>
-      ${predictionBarHtml}
+      
+      <div class="match-footer-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; border-top: 1px solid rgba(0,0,0,0.03); padding-top: 6px; margin-top: 2px;">
+        <span class="match-time-text" style="font-size: 11px; color: var(--color-secondary); font-weight: 500;">${m.time}</span>
+        ${statusBadgeHtml}
+      </div>
     `;
 
     if (m.status !== "completed") {

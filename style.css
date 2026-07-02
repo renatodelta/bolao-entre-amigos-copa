@@ -4,34 +4,33 @@
 
 /* Design Tokens & CSS Variables */
 :root {
-  /* Colors - High Fidelity Neon Theme */
-  --bg-body: #020205;
-  --bg-shell: #090e1a;
-  --bg-shell-gradient: linear-gradient(180deg, #070b16 0%, #111827 100%);
-  --bg-card: rgba(17, 24, 39, 0.6);
-  --bg-card-hover: rgba(31, 41, 55, 0.8);
-  --bg-input: #0b0f19;
-  --bg-header: rgba(9, 14, 26, 0.85);
-  --bg-nav: rgba(9, 14, 26, 0.85);
-  --border-header: rgba(0, 242, 254, 0.15);
-  --border-nav: rgba(0, 242, 254, 0.15);
-  --bg-modal: #0b1329;
-  --bg-modal-overlay: rgba(2, 2, 5, 0.85);
-  --featured-gradient: linear-gradient(180deg, rgba(7, 11, 22, 0.3) 0%, rgba(7, 11, 22, 0.9) 100%), 
-                        radial-gradient(ellipse at center, rgba(0, 242, 254, 0.15) 0%, rgba(7, 11, 22, 0) 75%);
+  /* Colors - Premium Light Green Theme (Inspired by the Screenshot) */
+  --bg-body: #eef2f5;
+  --bg-shell: #f4f7f6;
+  --bg-shell-gradient: linear-gradient(180deg, #f4f7f6 0%, #eef2f5 100%);
+  --bg-card: #ffffff;
+  --bg-card-hover: #f9fbfb;
+  --bg-input: #ffffff;
+  --bg-header: #004d40; /* Deep Teal Green */
+  --bg-nav: #004d40;
+  --border-header: #ffcb05; /* Gold Stripe */
+  --border-nav: rgba(255, 255, 255, 0.1);
+  --bg-modal: #ffffff;
+  --bg-modal-overlay: rgba(15, 23, 42, 0.6);
+  --featured-gradient: linear-gradient(180deg, rgba(0, 77, 64, 0.05) 0%, rgba(0, 77, 64, 0.15) 100%);
   
-  --color-primary: #ffffff;
-  --color-secondary: #9ca3af;
-  --color-accent: #00f2fe; /* Cyber Neon Cyan */
-  --color-accent-hover: #00b4fe;
+  --color-primary: #1e293b; /* Dark text */
+  --color-secondary: #64748b; /* Gray text */
+  --color-accent: #00875a; /* Active Green */
+  --color-accent-hover: #006c48;
   
-  --color-success: #10b981;
+  --color-success: #00875a;
   --color-danger: #ef4444;
   --color-warning: #f59e0b;
-  --color-live: #ff2a5f; /* Vibrant Neon Magenta */
+  --color-live: #e74c3c;
   
-  --border-color: rgba(0, 242, 254, 0.2);
-  --border-color-glow: rgba(0, 242, 254, 0.5);
+  --border-color: #e2e8f0;
+  --border-color-glow: rgba(0, 135, 90, 0.3);
   
   /* Font Stack */
   --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -46,11 +45,11 @@
   --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   
   /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 4px 16px rgba(0, 242, 254, 0.08);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
-  --shadow-gold: 0 0 15px rgba(0, 242, 254, 0.25);
-  --shadow-glow-active: 0 0 20px rgba(0, 242, 254, 0.25);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-gold: 0 0 15px rgba(0, 135, 90, 0.15);
+  --shadow-glow-active: 0 0 20px rgba(0, 135, 90, 0.2);
 }
 
 /* Hero Theme Variables Switch (Superhero Vibe) */
@@ -1700,13 +1699,21 @@ p.subtitle {
     transform: scale(1) translateY(0);
     opacity: 1;
   }
+  .modal-card.admin-modal-card {
+    max-width: 850px;
+  }
+  
+  .modal-overlay.open .modal-card {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
 }
 
 /* ==========================================================================
-   NUEVA INTERFACE ÉPICA Y MOBILE-FIRST (GLASSMORPHISM & ALBUM STYLING)
+   INTERFÁCIL ÉPICA - TEMA VERDE BRANCO (INSPIRADO NO PRINT DO USUÁRIO)
    ========================================================================== */
 
-/* Glassmorphism general */
+/* Cards sólidos e limpos */
 .match-card, 
 .mini-stat-card, 
 .stat-card, 
@@ -1715,142 +1722,207 @@ p.subtitle {
 .auth-form-container,
 .settings-list,
 .achievement-badge-card {
-  background: rgba(12, 34, 76, 0.45) !important;
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4) !important;
-  border-radius: 20px !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-sm) !important;
+  border-radius: 14px !important;
+  color: var(--color-primary) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: all 0.2s ease !important;
 }
 
-.match-card:hover, 
-.mini-stat-card:hover,
-.achievement-badge-card:hover {
-  border-color: rgba(255, 208, 0, 0.3) !important;
-  transform: translateY(-3px) scale(1.01);
-  box-shadow: 0 12px 40px 0 rgba(255, 208, 0, 0.1) !important;
+/* Bordas de estado (Salvo vs Aberto) baseados no print */
+.match-card.has-prediction {
+  border: 2px solid #2ecc71 !important;
+}
+.match-card.no-prediction {
+  border: 2px solid #e74c3c !important;
+}
+.match-card.completed-match {
+  border: 1px solid #cbd5e1 !important;
 }
 
-/* Vibrancy in headers */
+.match-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* Welcome banner light colors */
 .welcome-banner {
-  background: linear-gradient(135deg, rgba(3, 18, 44, 0.8), rgba(12, 34, 76, 0.5)) !important;
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
+  background: linear-gradient(135deg, #004d40, #00796b) !important;
+  color: #ffffff !important;
+  padding: 16px 20px;
 }
-.welcome-banner::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -30%;
-  width: 150px;
-  height: 150px;
-  background: radial-gradient(circle, rgba(255,208,0,0.2) 0%, rgba(255,208,0,0) 70%);
-  pointer-events: none;
+.welcome-banner .banner-title {
+  color: #ffffff !important;
+}
+.welcome-banner .banner-sub {
+  color: #ffcb05 !important;
 }
 
-/* Touch targets optimization for mobile */
+/* Top Header & Navigation styling (Inspired by deep green & gold stripe) */
+.app-header {
+  background: var(--bg-header) !important;
+  border-bottom: 4px solid var(--border-header) !important;
+  color: #ffffff !important;
+}
+.app-logo, .app-logo span {
+  color: #ffffff !important;
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
+  text-shadow: none !important;
+}
+.icon-btn {
+  color: #ffffff !important;
+}
+
+.app-navigation {
+  background: var(--bg-nav) !important;
+  border-top: 4px solid var(--border-header) !important;
+}
+.nav-tab {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+.nav-tab.active {
+  color: var(--border-header) !important;
+}
+.nav-tab.active::after {
+  background-color: var(--border-header) !important;
+  box-shadow: 0 0 6px var(--border-header) !important;
+}
+
+/* Match Row Elements (Compact single row layout) */
+.match-row-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.match-team {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 38%;
+}
+.match-team.away {
+  justify-content: flex-end;
+}
+.match-team-flag img {
+  width: 28px;
+  height: 20px;
+  border-radius: 4px;
+  object-fit: cover;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+.match-team-name {
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  color: #1e293b;
+}
+
+/* Score boxes */
+.match-score-boxes {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+.score-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 15px;
+  background: #f8fafc;
+  color: #1e293b;
+}
+.score-box.prediction {
+  background: #f0fdf4;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+.score-box.completed {
+  background: #e2e8f0;
+  color: #334155;
+  border-color: #cbd5e1;
+}
+.score-vs {
+  font-size: 12px;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+/* Status Badges */
+.badge-status {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-saved {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+.badge-open {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+.badge-completed {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+/* Touch optimization */
 @media (max-width: 991px) {
   .btn {
-    min-height: 48px;
-    font-size: 16px;
-    border-radius: 14px;
-    letter-spacing: 0.5px;
-  }
-  
-  .nav-tab {
-    min-height: 64px;
-    padding: 10px 0;
-  }
-  
-  .filter-tab {
     min-height: 44px;
-    font-size: 14px;
-    border-radius: 12px;
-  }
-  
-  .score-input {
-    width: 65px;
-    height: 55px;
-    font-size: 28px;
-    border-radius: 14px;
-  }
-
-  .match-scores-middle {
-    font-size: 26px;
-    gap: 8px;
-  }
-  
-  .match-team-name {
-    font-size: 16px;
-    font-weight: 700;
-  }
-
-  .match-team-flag {
-    font-size: 32px;
+    font-size: 15px;
+    border-radius: 10px;
   }
 }
 
-/* Micro-animations and feedback */
+/* Micro-animations */
 .btn:active, 
 .nav-tab:active, 
 .match-card:active,
-.filter-tab:active,
-.achievement-badge-card:active {
-  transform: scale(0.96) !important;
+.filter-tab:active {
+  transform: scale(0.97) !important;
 }
 
-/* Premium Gold Text details */
-.app-logo span,
-.auth-logo span,
-.vs-divider,
-.ranking-pos.pos-1 {
-  background: linear-gradient(135deg, #ffd000 0%, #ffae00 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 8px rgba(255, 208, 0, 0.3));
-}
-
-/* Admin Album-style Matches List rendering inline */
+/* Admin Album list changes override */
 .admin-match-inline-card {
-  transition: all 0.25s ease;
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
 }
-.admin-match-inline-card:hover {
-  border-color: rgba(255, 208, 0, 0.4) !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
-}
-
-/* Custom styles for inline album inputs and select */
 .admin-inline-score {
-  border: 1px solid rgba(255,255,255,0.1) !important;
-  transition: all 0.2s ease;
+  border: 1px solid #cbd5e1 !important;
+  background-color: #f8fafc !important;
+  color: #1e293b !important;
 }
 .admin-inline-score:focus {
-  border-color: var(--color-accent) !important;
-  box-shadow: 0 0 10px rgba(255, 208, 0, 0.3) !important;
-  background-color: rgba(255,255,255,0.05) !important;
+  border-color: #00875a !important;
+  box-shadow: 0 0 0 2px rgba(0, 135, 90, 0.2) !important;
+  background-color: #ffffff !important;
 }
-
 .admin-inline-status {
-  background-color: rgba(255, 255, 255, 0.04) !important;
-  border: 1px solid rgba(255,255,255,0.1) !important;
-  color: white !important;
-}
-.admin-inline-status:focus {
-  border-color: var(--color-accent) !important;
+  background-color: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #1e293b !important;
 }
 
-/* Save button in inline matches */
 .save-inline-match-btn {
-  background: linear-gradient(135deg, #ffd000 0%, #f59e0b 100%) !important;
-  border: none !important;
-  color: #03122c !important;
-  box-shadow: 0 2px 8px rgba(255, 208, 0, 0.2) !important;
+  background: #00875a !important;
+  color: #ffffff !important;
 }
 .save-inline-match-btn:hover {
-  background: linear-gradient(135deg, #ffae00 0%, #d97706 100%) !important;
-  box-shadow: 0 4px 12px rgba(255, 208, 0, 0.4) !important;
+  background: #006c48 !important;
 }
 
 

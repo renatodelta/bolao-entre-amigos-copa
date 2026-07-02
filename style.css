@@ -1673,6 +1673,10 @@ p.subtitle {
     box-shadow: var(--shadow-lg);
   }
   
+  .modal-card.admin-modal-card {
+    max-width: 850px;
+  }
+  
   .modal-overlay.open .modal-card {
     transform: scale(1) translateY(0);
     opacity: 1;

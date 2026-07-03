@@ -226,6 +226,8 @@ function loadState() {
         }
         return defaultMatch;
       });
+      // Always reset rankings — must come fresh from API, never from stale localStorage cache
+      state.rankings = JSON.parse(JSON.stringify(DEFAULT_STATE.rankings));
     } catch (e) {
       state = JSON.parse(JSON.stringify(DEFAULT_STATE));
     }

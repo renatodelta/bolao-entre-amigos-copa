@@ -181,12 +181,13 @@ app.get('/api/protected/me', async (c) => {
       globalRank: userId === 'admin_id' ? 999 : 42,
       levelTitle: userId === 'admin_id' ? "Nível 100 — Organizador" : "Nível 24 — Artilheiro",
       status: userId === 'admin_id' ? 'approved' : 'approved',
-      is_admin: userId === 'admin_id' ? 1 : 0
+      is_admin: userId === 'admin_id' ? 1 : 0,
+      avatar: userId === 'admin_id' ? 'avatar.jpg' : 'avatar.jpg'
     });
   }
 
   try {
-    const user = await db.prepare('SELECT id, name, email, points, accuracy, global_rank, level_title, status, is_admin, notifications_enabled FROM users WHERE id = ?').bind(userId).first();
+    const user = await db.prepare('SELECT id, name, email, points, accuracy, global_rank, level_title, status, is_admin, notifications_enabled, avatar FROM users WHERE id = ?').bind(userId).first();
     if (!user) return c.json({ error: 'Usuário não encontrado' }, 404);
 
     return c.json(user);
@@ -246,6 +247,24 @@ app.get('/api/protected/predictions', async (c) => {
   }
 });
 
+// 4c. UPDATE PROFILE NAME AND AVATAR
+app.put('/api/protected/profile', async (c) => {
+  const userId = c.get('userId');
+  const { name, avatar } = await c.req.json();
+  const db = c.env?.DB;
+
+  if (!db) {
+    return c.json({ success: true, message: 'Profile updated in Mock Mode' });
+  }
+
+  try {
+    await db.prepare('UPDATE users SET name = ?, avatar = ? WHERE id = ?').bind(name, avatar, userId).run();
+    return c.json({ success: true });
+  } catch (err) {
+    return c.json({ error: err.message }, 500);
+  }
+});
+
 // 5. GET LEADERBOARD (Only Global Group remains)
 app.get('/api/protected/rankings/:groupId', async (c) => {
   const db = c.env?.DB;
@@ -255,7 +274,7 @@ app.get('/api/protected/rankings/:groupId', async (c) => {
   }
 
   try {
-    const { results } = await db.prepare('SELECT name, points, accuracy, id FROM users ORDER BY points DESC LIMIT 100').all();
+    const { results } = await db.prepare('SELECT name, points, accuracy, id, avatar FROM users ORDER BY points DESC LIMIT 100').all();
     return c.json(results);
   } catch (err) {
     return c.json({ error: err.message }, 500);

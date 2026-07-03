@@ -96,34 +96,6 @@ const DEFAULT_MOCK_USERS_DB = [
     notificationsEnabled: true,
     avatar: "avatar.jpg"
   },
-  {
-    id: "user_ana_id",
-    name: "Ana Cláudia",
-    email: "ana@bolao.com",
-    password: "123456",
-    points: 1520,
-    accuracy: 68,
-    globalRank: 2,
-    levelTitle: "Nível 30 — Veterana",
-    status: "approved",
-    is_admin: 0,
-    notificationsEnabled: true,
-    avatar: "avatar2.jpg"
-  },
-  {
-    id: "user_rodrigo_id",
-    name: "Rodrigo",
-    email: "rodrigo@bolao.com",
-    password: "123456",
-    points: 1580,
-    accuracy: 72,
-    globalRank: 1,
-    levelTitle: "Nível 35 — Mestre",
-    status: "approved",
-    is_admin: 0,
-    notificationsEnabled: true,
-    avatar: "avatar1.jpg"
-  }
 ];
 
 
@@ -167,8 +139,6 @@ const DEFAULT_STATE = {
   ],
   rankings: {
     global: [
-      { id: "user_rodrigo_id", name: "Rodrigo", avatar: "avatar1.jpg", points: 1580, trend: "up", isCurrentUser: false },
-      { id: "user_ana_id", name: "Ana Cláudia", avatar: "avatar2.jpg", points: 1520, trend: "same", isCurrentUser: false },
       { id: "pedro_mock_id", name: "Pedro Alcântara", avatar: "avatar.jpg", points: 1240, trend: "up", isCurrentUser: true }
     ]
   }
@@ -999,6 +969,12 @@ async function loadMatchesData() {
           trend: "same",
           isCurrentUser: r.id === state.user?.id
         }));
+        // Sync current user's points & accuracy from fresh server data
+        const myEntry = dbRankings.find(r => r.id === state.user?.id);
+        if (myEntry && state.user) {
+          state.user.points = myEntry.points;
+          state.user.accuracy = myEntry.accuracy;
+        }
       }
     } catch (e) {
       console.warn("Could not load rankings from API", e);

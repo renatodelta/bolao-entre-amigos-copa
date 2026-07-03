@@ -1088,185 +1088,108 @@ function renderRankingChart() {
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
 
-  let users = [];
-  if (!isApiActive) {
-    users = loadMockUsersDB();
-  } else {
-    users = (state.rankings.global || []).map(r => ({
-      id: r.id || r.name,
-      name: r.name,
-      points: r.points,
-      isCurrentUser: r.isCurrentUser
-    }));
-  }
-
-  const baseHistories = {
-    "admin_id": [0, 0, 0, 0, 0, 0],
-    "user_rodrigo_id": [0, 500, 800, 1100, 1580, 1580],
-    "user_ana_id": [0, 600, 900, 1200, 1520, 1520],
-    "user_mariana_id": [0, 300, 600, 1000, 1390, 1390],
-    "pedro_mock_id": [0, 400, 700, 950, 1240, 1240],
-    "user_carlos_id": [0, 450, 650, 850, 1100, 1100],
-    "user_beatriz_id": [0, 350, 550, 750, 950, 950],
-    "user_andre_id": [0, 300, 500, 700, 840, 840],
-    "user_bruno_id": [0, 250, 400, 550, 720, 720],
-    "user_gabriel_id": [0, 200, 350, 480, 610, 610],
-    "user_camila_id": [0, 150, 280, 400, 530, 530]
-  };
-
-  const m1 = state.matches.find(m => m.id === "m1");
-  const isM1Played = m1 && (m1.status === "completed" || m1.status === "live");
-  const m1RealHome = m1 ? m1.homeScore : null;
-  const m1RealAway = m1 ? m1.awayScore : null;
-
-  const m1MockPredictions = {
-    "user_rodrigo_id": { home: 3, away: 0 },
-    "user_ana_id": { home: 2, away: 1 },
-    "user_mariana_id": { home: 1, away: 1 },
-    "user_carlos_id": { home: 2, away: 0 },
-    "user_beatriz_id": { home: 0, away: 1 },
-    "user_andre_id": { home: 2, away: 2 },
-    "user_bruno_id": { home: 4, away: 1 },
-    "user_gabriel_id": { home: 1, away: 2 },
-    "user_camila_id": { home: 3, away: 1 }
-  };
-
-  users.forEach(u => {
-    let hist = baseHistories[u.id];
-    if (!hist) {
-      hist = [0, 0, 0, 0, u.points, u.points];
-      baseHistories[u.id] = hist;
-    }
-
-    if (u.id === "pedro_mock_id" || u.isCurrentUser || u.id === state.user?.id) {
-      hist[4] = state.user?.points || 0;
-    } else {
-      hist[4] = u.points;
-    }
-
-    if (isM1Played && m1RealHome !== null && m1RealAway !== null) {
-      let predHome = null;
-      let predAway = null;
-
-      if (u.id === "pedro_mock_id" || u.isCurrentUser || u.id === state.user?.id) {
-        const pred = state.predictions["m1"];
-        if (pred) {
-          predHome = pred.homeScore;
-          predAway = pred.awayScore;
-        }
-      } else {
-        const pred = m1MockPredictions[u.id];
-        if (pred) {
-          predHome = pred.home;
-          predAway = pred.away;
-        }
-      }
-
-      const m1Gained = getPointsAwarded(predHome, predAway, m1RealHome, m1RealAway);
-      hist[5] = hist[4] + m1Gained;
-    } else {
-      hist[5] = hist[4];
-    }
-  });
-
-  const rankHistories = {};
-  users.forEach(u => {
-    rankHistories[u.id] = [];
-  });
-
-  const stepsCount = 6;
-  for (let step = 0; step < stepsCount; step++) {
-    const sortedAtStep = [...users].map(u => ({
-      id: u.id,
-      points: baseHistories[u.id] ? baseHistories[u.id][step] : 0
-    }));
-    sortedAtStep.sort((a, b) => b.points - a.points);
-
-    sortedAtStep.forEach((item, index) => {
-      if (rankHistories[item.id]) {
-        rankHistories[item.id].push(index + 1);
-      }
-    });
-  }
-
-  const sortedCurrent = [...users].sort((a, b) => (baseHistories[b.id][5]) - (baseHistories[a.id][5]));
-  const top4Ids = sortedCurrent.slice(0, 4).map(u => u.id);
-  const currentUserId = state.user?.id || "pedro_mock_id";
-
-  const idsToShow = new Set(top4Ids);
-  idsToShow.add(currentUserId);
-
-  const colors = [
-    "#3b82f6", "#10b981", "#ec4899", "#a855f7", "#06b6d4",
-    "#f59e0b", "#ef4444", "#14b8a6", "#6366f1", "#f43f5e",
-    "#84cc16", "#10b981"
-  ];
-  const datasets = [];
-  let colorIdx = 0;
-
-  users.forEach(u => {
-    const isMe = u.id === currentUserId;
-    const label = isMe ? `${u.name} (Você)` : u.name;
-    datasets.push({
-      label: label,
-      data: chartMode === "rank" ? rankHistories[u.id] : (baseHistories[u.id] || []),
-      borderColor: isMe ? "#ffd000" : colors[colorIdx % colors.length],
-      backgroundColor: "transparent",
-      borderWidth: isMe ? 4 : 2,
-      tension: 0.3,
-      pointRadius: 4,
-      pointHoverRadius: 6
-    });
-    if (!isMe) colorIdx++;
-  });
-
   if (rankingChartInstance) {
     rankingChartInstance.destroy();
+    rankingChartInstance = null;
   }
 
-  const labels = ["Início", "Jogo 1", "Jogo 2", "Jogo 3", "Jogo 4", "Jogo 5"];
+  // Get completed matches in chronological order
+  const completedMatches = state.matches
+    .filter(m => m.status === "completed" && m.homeScore !== null && m.awayScore !== null)
+    .sort((a, b) => {
+      if (a.startTime && b.startTime) return a.startTime.localeCompare(b.startTime);
+      return a.id.localeCompare(b.id);
+    });
+
+  if (completedMatches.length === 0) return;
+
+  const n = completedMatches.length;
+  const labels = ["Início", ...completedMatches.map((m, i) =>
+    `J${i + 1} ${m.homeAbbrev}×${m.awayAbbrev}`
+  )];
+
+  // --- Current user's REAL cumulative points per match ---
+  let cumPoints = 0;
+  const currentUserData = [0];
+  for (const m of completedMatches) {
+    const pred = state.predictions[m.id];
+    if (pred) {
+      cumPoints += getPointsAwarded(pred.homeScore, pred.awayScore, m.homeScore, m.awayScore);
+    }
+    currentUserData.push(cumPoints);
+  }
+
+  const colors = ["#3b82f6", "#10b981", "#ec4899", "#a855f7", "#06b6d4", "#f59e0b", "#ef4444"];
+  const datasets = [];
+
+  // Current user dataset (accurate, game-by-game)
+  if (state.user) {
+    datasets.push({
+      label: `${state.user.name} (Você)`,
+      data: currentUserData,
+      borderColor: "#ffd000",
+      backgroundColor: "rgba(255,208,0,0.07)",
+      borderWidth: 3,
+      tension: 0.35,
+      pointRadius: 5,
+      pointHoverRadius: 7,
+      fill: true
+    });
+  }
+
+  // Other ranking users: proportionally interpolated reference lines (approximate)
+  const otherUsers = (state.rankings.global || [])
+    .filter(r => r.id !== state.user?.id)
+    .slice(0, 5);
+
+  otherUsers.forEach((u, i) => {
+    const data = [0];
+    for (let j = 1; j <= n; j++) {
+      data.push(Math.round((u.points / n) * j));
+    }
+    datasets.push({
+      label: u.name,
+      data,
+      borderColor: colors[i % colors.length],
+      backgroundColor: "transparent",
+      borderWidth: 2,
+      tension: 0.35,
+      pointRadius: 3,
+      pointHoverRadius: 5,
+      borderDash: [4, 3]
+    });
+  });
 
   rankingChartInstance = new Chart(ctx, {
     type: "line",
-    data: {
-      labels: labels,
-      datasets: datasets
-    },
+    data: { labels, datasets },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
       scales: {
         x: {
-          grid: { color: "rgba(255, 255, 255, 0.05)" },
-          ticks: { color: "#94a3b8", font: { family: "Outfit", size: 10 } }
+          grid: { color: "rgba(255,255,255,0.05)" },
+          ticks: { color: "#94a3b8", font: { family: "Outfit", size: 9 }, maxRotation: 30 }
         },
         y: {
-          reverse: chartMode === "rank",
-          min: chartMode === "rank" ? 1 : 0,
-          max: chartMode === "rank" ? Math.max(4, users.length) : undefined,
+          min: 0,
           ticks: {
-            stepSize: chartMode === "rank" ? 1 : undefined,
             color: "#94a3b8",
             font: { family: "Outfit", size: 10 },
-            callback: function (value) { return chartMode === "rank" ? value + "º" : value; }
+            callback: v => v + " pts"
           },
-          grid: { color: "rgba(255, 255, 255, 0.05)" }
+          grid: { color: "rgba(255,255,255,0.05)" }
         }
       },
       plugins: {
         legend: {
           position: "bottom",
-          labels: {
-            boxWidth: 10,
-            color: "#94a3b8",
-            font: { family: "Outfit", size: 10 }
-          }
+          labels: { boxWidth: 10, color: "#94a3b8", font: { family: "Outfit", size: 10 } }
         },
         tooltip: {
           callbacks: {
-            label: function (context) {
-              return context.dataset.label + ": " + (chartMode === "rank" ? context.raw + "º Lugar" : context.raw + " Pontos");
-            }
+            label: ctx => `${ctx.dataset.label}: ${ctx.raw} pts`
           }
         }
       }

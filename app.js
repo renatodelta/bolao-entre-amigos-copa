@@ -1494,11 +1494,30 @@ function renderMatchesList(filter = "all") {
     // Prediction score displays or inputs
     let middleScoresHtml = "";
     if (m.status === "completed") {
+      let predRow = "";
+      if (userPred) {
+        const pts = getPointsAwarded(userPred.homeScore, userPred.awayScore, m.homeScore, m.awayScore);
+        let predColor, predBg;
+        if (pts === 10) { predColor = "#f59e0b"; predBg = "rgba(245,158,11,0.13)"; }       // exact — gold
+        else if (pts === 7) { predColor = "#22c55e"; predBg = "rgba(34,197,94,0.13)"; }    // right diff — green
+        else if (pts === 5) { predColor = "#3b82f6"; predBg = "rgba(59,130,246,0.13)"; }   // right result — blue
+        else if (pts === 2) { predColor = "#f97316"; predBg = "rgba(249,115,22,0.13)"; }   // partial — orange
+        else { predColor = "#ef4444"; predBg = "rgba(239,68,68,0.13)"; }                   // wrong — red
+        predRow = `<div style="display:flex;align-items:center;gap:4px;margin-top:4px;padding:2px 7px;border-radius:20px;background:${predBg};">
+          <span style="font-size:10px;color:var(--color-secondary);font-weight:500;">Palpite:</span>
+          <span style="font-size:12px;font-weight:800;color:${predColor};letter-spacing:0.5px;">${userPred.homeScore} x ${userPred.awayScore}</span>
+        </div>`;
+      } else {
+        predRow = `<div style="margin-top:4px;font-size:10px;color:var(--color-secondary);opacity:0.55;font-style:italic;">sem palpite</div>`;
+      }
       middleScoresHtml = `
-        <div class="match-score-boxes">
-          <span class="score-box completed">${homeScoreDisplay}</span>
-          <span class="score-vs">x</span>
-          <span class="score-box completed">${awayScoreDisplay}</span>
+        <div class="match-score-boxes" style="flex-direction:column;align-items:center;gap:0;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="score-box completed">${homeScoreDisplay}</span>
+            <span class="score-vs">x</span>
+            <span class="score-box completed">${awayScoreDisplay}</span>
+          </div>
+          ${predRow}
         </div>
       `;
     } else {

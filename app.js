@@ -591,15 +591,35 @@ async function deleteUser(targetUserId) {
   try {
     if (isApiActive) {
       await apiRequest(`/api/protected/admin/users/${targetUserId}`, "DELETE");
+      // Remove the deleted user from the local rankings cache immediately
+      state.rankings.global = (state.rankings.global || []).filter(r => r.id !== targetUserId);
+      // Reload fresh rankings from API
+      try {
+        const dbRankings = await apiRequest("/api/protected/rankings/global");
+        if (Array.isArray(dbRankings)) {
+          state.rankings.global = dbRankings.map(r => ({
+            id: r.id,
+            name: r.name,
+            avatar: r.avatar || "avatar.jpg",
+            points: r.points,
+            trend: "same",
+            isCurrentUser: r.id === state.user?.id
+          }));
+        }
+      } catch (e) {
+        console.warn("Could not reload rankings after delete", e);
+      }
     } else {
       // Mock Mode deletion
       let db = loadMockUsersDB();
       db = db.filter(u => u.id !== targetUserId);
       saveMockUsersDB(db);
+      state.rankings.global = (state.rankings.global || []).filter(r => r.id !== targetUserId);
     }
     showToast("Usuário excluído com sucesso!", "success");
     loadAdminUsers();
     renderLeaderboard("global");
+    renderHomeRankingPreview();
   } catch (err) {
     showToast("Erro ao excluir usuário: " + err.message, "danger");
   }

@@ -344,7 +344,21 @@ async function apiRequest(endpoint, method = "GET", body = null) {
   }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-  const data = await response.json();
+
+  // Some responses (e.g. 204 No Content or DELETE) may have no body
+  const contentType = response.headers.get("content-type") || "";
+  let data = {};
+  if (response.status !== 204 && contentType.includes("application/json")) {
+    data = await response.json();
+  } else if (response.status !== 204 && !contentType.includes("application/json")) {
+    // Try to parse anyway; if it fails, treat as empty object
+    try {
+      data = await response.json();
+    } catch (_) {
+      data = {};
+    }
+  }
+
   if (!response.ok) {
     throw new Error(data.error || "Erro na chamada de API");
   }

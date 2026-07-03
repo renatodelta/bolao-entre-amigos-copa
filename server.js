@@ -347,7 +347,9 @@ app.delete('/api/protected/admin/users/:userId', async (c) => {
       return c.json({ error: 'Acesso negado: Requer privilégios de administrador' }, 403);
     }
 
+    await db.prepare('DELETE FROM predictions WHERE user_id = ?').bind(targetUserId).run();
     await db.prepare('DELETE FROM users WHERE id = ?').bind(targetUserId).run();
+
     return c.json({ success: true });
   } catch (err) {
     return c.json({ error: err.message }, 500);

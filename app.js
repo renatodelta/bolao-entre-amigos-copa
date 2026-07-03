@@ -345,22 +345,25 @@ async function apiRequest(endpoint, method = "GET", body = null) {
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
 
-  // Some responses (e.g. 204 No Content or DELETE) may have no body
-  const contentType = response.headers.get("content-type") || "";
+  // Read raw text first so we never lose the body, even if it's not valid JSON
+  let rawText = "";
   let data = {};
-  if (response.status !== 204 && contentType.includes("application/json")) {
-    data = await response.json();
-  } else if (response.status !== 204 && !contentType.includes("application/json")) {
-    // Try to parse anyway; if it fails, treat as empty object
-    try {
-      data = await response.json();
-    } catch (_) {
-      data = {};
+  if (response.status !== 204) {
+    rawText = await response.text();
+    if (rawText) {
+      try {
+        data = JSON.parse(rawText);
+      } catch (_) {
+        // Response is not JSON — use raw text as the error message
+        if (!response.ok) {
+          throw new Error(`Erro ${response.status}: ${rawText.substring(0, 200)}`);
+        }
+      }
     }
   }
 
   if (!response.ok) {
-    throw new Error(data.error || "Erro na chamada de API");
+    throw new Error(data.error || `Erro ${response.status} na chamada de API`);
   }
   return data;
 }

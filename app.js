@@ -161,6 +161,16 @@ function saveMockUsersDB(db) {
   localStorage.setItem("bolao_mock_users_db", JSON.stringify(db));
 }
 
+function loadMockPredictions(userId) {
+  const saved = localStorage.getItem(`bolao_mock_predictions_${userId}`);
+  return saved ? JSON.parse(saved) : {};
+}
+
+function saveMockPredictions(userId, predictions) {
+  localStorage.setItem(`bolao_mock_predictions_${userId}`, JSON.stringify(predictions));
+}
+
+
 function loadState() {
   const saved = localStorage.getItem("bolao_2026_state");
   if (saved) {
@@ -351,6 +361,8 @@ async function syncSavePrediction(matchId, homeScore, awayScore) {
     } catch (err) {
       console.warn("API Sync failed, stored locally", err);
     }
+  } else if (state.user) {
+    saveMockPredictions(state.user.id, state.predictions);
   }
 }
 
@@ -369,14 +381,19 @@ async function handleAuthSubmit() {
   authSubmitBtn.textContent = "PROCESSANDO...";
 
   try {
+    // Reset global state to clean any residual predictions from previous sessions
+    state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+
     if (isApiActive) {
       if (isSignupMode) {
         const data = await apiRequest("/api/auth/register", "POST", { name, email, password });
         localStorage.setItem("bolao_auth_token", data.token);
+        state.predictions = {};
         state.user = data.user;
       } else {
         const data = await apiRequest("/api/auth/login", "POST", { email, password });
         localStorage.setItem("bolao_auth_token", data.token);
+        state.predictions = {};
         state.user = data.user;
       }
     } else {
@@ -406,6 +423,7 @@ async function handleAuthSubmit() {
         saveMockUsersDB(usersDB);
 
         localStorage.setItem("bolao_auth_token", "mock-token-" + newMockId);
+        state.predictions = {};
         state.user = newMockUser;
       } else {
         const found = usersDB.find(u => u.email === email && u.password === password);
@@ -415,6 +433,7 @@ async function handleAuthSubmit() {
 
         localStorage.setItem("bolao_auth_token", "mock-token-" + found.id);
         state.user = found;
+        state.predictions = loadMockPredictions(found.id);
       }
     }
 
@@ -435,7 +454,7 @@ async function handleLogout() {
   if (confirmed) {
     localStorage.removeItem("bolao_auth_token");
     localStorage.removeItem("bolao_2026_state");
-    state.user = null;
+    state = JSON.parse(JSON.stringify(DEFAULT_STATE)); // Reset global state completely!
     appShellContainer.classList.add("auth-required");
     authEmailInput.value = "";
     authPassInput.value = "";
@@ -946,6 +965,7 @@ async function loadMatchesData() {
     }
 
     // Load user predictions from server and restore into local state
+    state.predictions = {}; // Clear predictions first to prevent bleed-over between accounts!
     try {
       const preds = await apiRequest("/api/protected/predictions");
       if (Array.isArray(preds)) {
@@ -1016,22 +1036,24 @@ function updateProfileUI() {
     welcomeSub.textContent = `BEM-VINDO, ${u.name.toUpperCase()}!`;
   }
 
-  welcomeName.textContent = "Seu Desempenho";
-  homeTotalPoints.textContent = pointsFormatted;
-  homeAccuracy.textContent = `${u.accuracy}%`;
-
-  // Update avatar images dynamically
-  const headerAvatarImg = document.getElementById("header-avatar-img");
-  const profileAvatarLarge = document.getElementById("profile-avatar-large");
-  if (headerAvatarImg) headerAvatarImg.src = `public/${u.avatar || 'avatar.jpg'}`;
-  if (profileAvatarLarge) profileAvatarLarge.src = `public/${u.avatar || 'avatar.jpg'}`;
-
-  // Profile fields
   profileDisplayName.textContent = u.name;
   profileLevelTitle.textContent = u.levelTitle || "Nível 1 — Estreante";
-  profilePoints.textContent = pointsFormatted;
-  profileAccuracy.textContent = `${u.accuracy}%`;
-  profileGlobalRank.textContent = `#${u.globalRank || 999}`;
+
+  if (u.is_admin === 1) {
+    welcomeName.textContent = "Painel Administrativo";
+    homeTotalPoints.textContent = "—";
+    homeAccuracy.textContent = "—";
+    profilePoints.textContent = "—";
+    profileAccuracy.textContent = "—";
+    profileGlobalRank.textContent = "—";
+  } else {
+    welcomeName.textContent = "Seu Desempenho";
+    homeTotalPoints.textContent = pointsFormatted;
+    homeAccuracy.textContent = `${u.accuracy}%`;
+    profilePoints.textContent = pointsFormatted;
+    profileAccuracy.textContent = `${u.accuracy}%`;
+    profileGlobalRank.textContent = `#${u.globalRank || 999}`;
+  }
 
   // Control account status banner & text values
   if (u.status === "pending") {
@@ -1203,6 +1225,7 @@ function renderLeaderboard(groupId = "global") {
   if (!isApiActive) {
     const db = loadMockUsersDB();
     rankingList = db
+      .filter(user => user.is_admin !== 1)
       .map(user => ({
         id: user.id,
         name: user.name,
@@ -1282,6 +1305,7 @@ function renderHomeRankingPreview() {
   if (!isApiActive) {
     const db = loadMockUsersDB();
     rankingList = db
+      .filter(user => user.is_admin !== 1)
       .map(user => ({
         name: user.name,
         avatar: user.avatar || "avatar.jpg",
@@ -1875,6 +1899,7 @@ async function init() {
         const found = usersDB.find(u => u.id === userId);
         if (!found) throw new Error("Mock token expired");
         state.user = found;
+        state.predictions = loadMockPredictions(userId);
       }
 
       appShellContainer.classList.remove("auth-required");

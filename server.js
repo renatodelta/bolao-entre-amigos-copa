@@ -274,7 +274,7 @@ app.get('/api/protected/rankings/:groupId', async (c) => {
   }
 
   try {
-    const { results } = await db.prepare('SELECT name, points, accuracy, id, avatar FROM users ORDER BY points DESC LIMIT 100').all();
+    const { results } = await db.prepare('SELECT name, points, accuracy, id, avatar FROM users WHERE is_admin = 0 ORDER BY points DESC LIMIT 100').all();
     return c.json(results);
   } catch (err) {
     return c.json({ error: err.message }, 500);
@@ -400,8 +400,8 @@ app.post('/api/protected/admin/matches/update', async (c) => {
       timeVal, startTimeVal, matchId
     ).run();
 
-    // Recalculate Points, Accuracy, and Rankings for all users
-    const { results: users } = await db.prepare("SELECT id FROM users").all();
+    // Recalculate Points, Accuracy, and Rankings for all users (excluding admin)
+    const { results: users } = await db.prepare("SELECT id FROM users WHERE is_admin = 0").all();
 
     for (const u of users) {
       const { results: completedPredictions } = await db.prepare(
@@ -429,8 +429,8 @@ app.post('/api/protected/admin/matches/update', async (c) => {
       await db.prepare("UPDATE users SET points = ?, accuracy = ? WHERE id = ?").bind(points, accuracy, u.id).run();
     }
 
-    // Recalculate global_rank based on points DESC
-    const { results: sortedUsers } = await db.prepare("SELECT id FROM users ORDER BY points DESC, name ASC").all();
+    // Recalculate global_rank based on points DESC (excluding admin)
+    const { results: sortedUsers } = await db.prepare("SELECT id FROM users WHERE is_admin = 0 ORDER BY points DESC, name ASC").all();
     for (let i = 0; i < sortedUsers.length; i++) {
       const rank = i + 1;
       await db.prepare("UPDATE users SET global_rank = ? WHERE id = ?").bind(rank, sortedUsers[i].id).run();

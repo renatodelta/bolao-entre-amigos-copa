@@ -175,6 +175,7 @@ const DEFAULT_STATE = {
 };
 
 let state = {};
+let chartMode = "rank"; // rank or points
 
 // --- LOCAL STORAGE HELPERS ---
 function loadMockUsersDB() {
@@ -430,7 +431,6 @@ async function handleAuthSubmit() {
 
     saveState();
     appShellContainer.classList.remove("auth-required");
-    showToast(`Bem-vindo, ${state.user.name}!`, "success");
 
     initAppContent();
   } catch (err) {
@@ -487,9 +487,15 @@ async function loadAdminUsers() {
       if (u.is_admin === 1) {
         actionBtnHtml = "<span style='font-size: 11px; color: var(--color-secondary); font-weight: 700;'>ADMIN</span>";
       } else if (u.status === "approved") {
-        actionBtnHtml = `<button class="btn-status-toggle suspend-action" data-user-id="${u.id}" data-action="pending">Suspender</button>`;
+        actionBtnHtml = `
+          <button class="btn-status-toggle suspend-action" data-user-id="${u.id}" data-action="pending">Suspender</button>
+          <button class="btn-delete-user delete-action" data-user-id="${u.id}" style="background-color: var(--color-danger); color: white; border: none; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; height: 28px; font-family: Outfit;">Excluir</button>
+        `;
       } else {
-        actionBtnHtml = `<button class="btn-status-toggle approve-action" data-user-id="${u.id}" data-action="approved">Liberar Acesso</button>`;
+        actionBtnHtml = `
+          <button class="btn-status-toggle approve-action" data-user-id="${u.id}" data-action="approved">Liberar Acesso</button>
+          <button class="btn-delete-user delete-action" data-user-id="${u.id}" style="background-color: var(--color-danger); color: white; border: none; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; height: 28px; font-family: Outfit;">Excluir</button>
+        `;
       }
 
       card.innerHTML = `
@@ -498,7 +504,7 @@ async function loadAdminUsers() {
           <span class="email">${u.email}</span>
           <span class="points">${u.points} Pontos</span>
         </div>
-        <div class="admin-user-actions">
+        <div class="admin-user-actions" style="display: flex; gap: 6px; align-items: center;">
           <span class="status-badge ${badgeClass}">${badgeText}</span>
           ${actionBtnHtml}
         </div>
@@ -512,6 +518,18 @@ async function loadAdminUsers() {
           const nextStatus = actionBtn.dataset.action;
 
           await toggleUserStatus(targetUserId, nextStatus);
+        });
+      }
+
+      // Bind delete user event click
+      const deleteBtn = card.querySelector(".btn-delete-user");
+      if (deleteBtn) {
+        deleteBtn.addEventListener("click", async () => {
+          const targetUserId = deleteBtn.dataset.userId;
+          const confirmDelete = await showConfirm("Excluir Usuário", `Tem certeza de que deseja excluir permanentemente o usuário ${u.name}?`);
+          if (confirmDelete) {
+            await deleteUser(targetUserId);
+          }
         });
       }
 
@@ -549,6 +567,24 @@ async function toggleUserStatus(targetUserId, nextStatus) {
     renderLeaderboard("global");
   } catch (err) {
     showToast("Erro ao alterar status: " + err.message, "danger");
+  }
+}
+
+async function deleteUser(targetUserId) {
+  try {
+    if (isApiActive) {
+      await apiRequest(`/api/protected/admin/users/${targetUserId}`, "DELETE");
+    } else {
+      // Mock Mode deletion
+      let db = loadMockUsersDB();
+      db = db.filter(u => u.id !== targetUserId);
+      saveMockUsersDB(db);
+    }
+    showToast("Usuário excluído com sucesso!", "success");
+    loadAdminUsers();
+    renderLeaderboard("global");
+  } catch (err) {
+    showToast("Erro ao excluir usuário: " + err.message, "danger");
   }
 }
 
@@ -1158,7 +1194,7 @@ function renderRankingChart() {
     const label = isMe ? `${u.name} (Você)` : u.name;
     datasets.push({
       label: label,
-      data: rankHistories[u.id],
+      data: chartMode === "rank" ? rankHistories[u.id] : (baseHistories[u.id] || []),
       borderColor: isMe ? "#ffd000" : colors[colorIdx % colors.length],
       backgroundColor: "transparent",
       borderWidth: isMe ? 4 : 2,
@@ -1190,14 +1226,14 @@ function renderRankingChart() {
           ticks: { color: "#94a3b8", font: { family: "Outfit", size: 10 } }
         },
         y: {
-          reverse: true,
-          min: 1,
-          max: Math.max(10, users.length),
+          reverse: chartMode === "rank",
+          min: chartMode === "rank" ? 1 : 0,
+          max: chartMode === "rank" ? Math.max(4, users.length) : undefined,
           ticks: {
-            stepSize: 1,
+            stepSize: chartMode === "rank" ? 1 : undefined,
             color: "#94a3b8",
             font: { family: "Outfit", size: 10 },
-            callback: function (value) { return value + "º"; }
+            callback: function (value) { return chartMode === "rank" ? value + "º" : value; }
           },
           grid: { color: "rgba(255, 255, 255, 0.05)" }
         }
@@ -1214,7 +1250,7 @@ function renderRankingChart() {
         tooltip: {
           callbacks: {
             label: function (context) {
-              return context.dataset.label + ": " + context.raw + "º Lugar";
+              return context.dataset.label + ": " + (chartMode === "rank" ? context.raw + "º Lugar" : context.raw + " Pontos");
             }
           }
         }
@@ -1831,6 +1867,15 @@ function initEventListeners() {
     showToast("Suporte ativo: help@bolao2026.com", "info");
   });
   document.getElementById("logout-btn").addEventListener("click", handleLogout);
+
+  const chartToggleMode = document.getElementById("chart-toggle-mode");
+  if (chartToggleMode) {
+    chartToggleMode.addEventListener("click", () => {
+      chartMode = chartMode === "rank" ? "points" : "rank";
+      chartToggleMode.textContent = chartMode === "rank" ? "Ver Pontos" : "Ver Posição";
+      renderRankingChart();
+    });
+  }
 }
 
 function updateThemeIcons() {

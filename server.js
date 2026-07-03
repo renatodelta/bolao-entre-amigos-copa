@@ -330,6 +330,30 @@ app.post('/api/protected/admin/users/toggle-status', async (c) => {
   }
 });
 
+// 7b. DELETE USER (Admin only)
+app.delete('/api/protected/admin/users/:userId', async (c) => {
+  const userId = c.get('userId');
+  const targetUserId = c.req.param('userId');
+  const db = c.env?.DB;
+
+  if (!db) {
+    return c.json({ success: true, message: 'User deleted in Mock Mode' });
+  }
+
+  try {
+    // Verify user is admin
+    const caller = await db.prepare('SELECT is_admin FROM users WHERE id = ?').bind(userId).first();
+    if (!caller || caller.is_admin !== 1) {
+      return c.json({ error: 'Acesso negado: Requer privilégios de administrador' }, 403);
+    }
+
+    await db.prepare('DELETE FROM users WHERE id = ?').bind(targetUserId).run();
+    return c.json({ success: true });
+  } catch (err) {
+    return c.json({ error: err.message }, 500);
+  }
+});
+
 // 8. UPDATE MATCH AND RECALCULATE POINTS (Admin only)
 app.post('/api/protected/admin/matches/update', async (c) => {
   const userId = c.get('userId');

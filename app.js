@@ -986,6 +986,7 @@ async function loadMatchesData() {
           name: r.name,
           avatar: r.avatar || "avatar.jpg",
           points: r.points,
+          pointsHistory: r.points_history || [],
           trend: "same",
           isCurrentUser: r.id === state.user?.id
         }));
@@ -1130,55 +1131,45 @@ function renderRankingChart() {
     `J${i + 1} ${m.homeAbbrev}×${m.awayAbbrev}`
   )];
 
-  // --- Current user's REAL cumulative points per match ---
-  let cumPoints = 0;
-  const currentUserData = [0];
-  for (const m of completedMatches) {
-    const pred = state.predictions[m.id];
-    if (pred) {
-      cumPoints += getPointsAwarded(pred.homeScore, pred.awayScore, m.homeScore, m.awayScore);
-    }
-    currentUserData.push(cumPoints);
-  }
-
   const colors = ["#3b82f6", "#10b981", "#ec4899", "#a855f7", "#06b6d4", "#f59e0b", "#ef4444"];
   const datasets = [];
 
-  // Current user dataset (accurate, game-by-game)
-  if (state.user) {
-    datasets.push({
-      label: `${state.user.name} (Você)`,
-      data: currentUserData,
-      borderColor: "#ffd000",
-      backgroundColor: "rgba(255,208,0,0.07)",
-      borderWidth: 3,
-      tension: 0.35,
-      pointRadius: 5,
-      pointHoverRadius: 7,
-      fill: true
-    });
+  const rankingUsers = state.rankings.global || [];
+  const currentUserId = state.user?.id;
+
+  // We show up to 5 top users in the chart + current user (if not in top 5)
+  const topUsersToShow = rankingUsers.slice(0, 5);
+  const showMe = rankingUsers.find(r => r.id === currentUserId);
+  
+  const usersToShow = new Set(topUsersToShow);
+  if (showMe) {
+    usersToShow.add(showMe);
   }
 
-  // Other ranking users: proportionally interpolated reference lines (approximate)
-  const otherUsers = (state.rankings.global || [])
-    .filter(r => r.id !== state.user?.id)
-    .slice(0, 5);
+  Array.from(usersToShow).forEach((u, i) => {
+    const isMe = u.id === currentUserId;
+    const label = isMe ? `${u.name} (Você)` : u.name;
 
-  otherUsers.forEach((u, i) => {
-    const data = [0];
-    for (let j = 1; j <= n; j++) {
-      data.push(Math.round((u.points / n) * j));
+    // Use pointsHistory from API. If not available (e.g. Mock Mode or failed to load), fallback to straight line
+    let data = u.pointsHistory;
+    if (!data || data.length === 0) {
+      data = [0];
+      for (let j = 1; j <= n; j++) {
+        data.push(Math.round((u.points / n) * j));
+      }
     }
+
     datasets.push({
-      label: u.name,
-      data,
-      borderColor: colors[i % colors.length],
-      backgroundColor: "transparent",
-      borderWidth: 2,
+      label: label,
+      data: data,
+      borderColor: isMe ? "#ffd000" : colors[i % colors.length],
+      backgroundColor: isMe ? "rgba(255,208,0,0.07)" : "transparent",
+      borderWidth: isMe ? 3 : 2,
       tension: 0.35,
-      pointRadius: 3,
-      pointHoverRadius: 5,
-      borderDash: [4, 3]
+      pointRadius: isMe ? 5 : 3,
+      pointHoverRadius: isMe ? 7 : 5,
+      fill: isMe,
+      borderDash: isMe ? [] : [4, 3]
     });
   });
 

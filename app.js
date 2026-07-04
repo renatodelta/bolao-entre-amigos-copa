@@ -662,6 +662,7 @@ async function loadAdminMatches() {
           
           <div style="display: flex; gap: 6px; flex-shrink: 0;">
             <button class="btn btn-primary btn-gold save-inline-match-btn" style="padding: 4px 10px; font-size: 11px; border-radius: 6px; font-weight: 700; height: 28px; min-height: auto;">Salvar</button>
+            <button class="btn btn-primary edit-match-action" style="padding: 4px 10px; font-size: 11px; background-color: #3b82f6; color: white; border: none; border-radius: 6px; height: 28px; font-weight: 700; cursor: pointer; font-family: Outfit;">Editar</button>
             <button class="btn-status-toggle delete-match-action" style="padding: 4px 10px; font-size: 11px; background-color: var(--color-danger); color: white; border: none; border-radius: 6px; height: 28px; font-weight: 700;">Excluir</button>
           </div>
         </div>
@@ -678,6 +679,11 @@ async function loadAdminMatches() {
       const awayScore = awayScoreVal !== "" ? parseInt(awayScoreVal) : null;
 
       await saveAdminMatchInline(m.id, homeScore, awayScore, statusVal);
+    });
+
+    // Bind edit event
+    card.querySelector(".edit-match-action").addEventListener("click", () => {
+      openAdminMatchModal(m.id);
     });
 
     // Bind delete event

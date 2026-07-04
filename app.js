@@ -959,10 +959,10 @@ async function saveAdminMatchDetails() {
       saveState();
     }
 
-    closeAllModals();
     adminMatchModal.classList.remove("open");
     showToast(currentEditingAdminMatchId ? "Partida atualizada com sucesso!" : "Partida criada com sucesso!", "success");
     initAppContent(); // Refresh UI in the background
+    loadAdminMatches(); // Refresh Admin Matches list
   } catch (err) {
     showToast("Erro ao salvar partida: " + err.message, "danger");
   }
@@ -987,6 +987,7 @@ async function deleteAdminMatch(matchId) {
     }
 
     initAppContent(); // Refresh UI in the background
+    loadAdminMatches(); // Refresh Admin Matches list
   } catch (err) {
     showToast("Erro ao excluir partida: " + err.message, "danger");
   }

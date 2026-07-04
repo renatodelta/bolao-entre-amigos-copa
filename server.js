@@ -356,6 +356,44 @@ app.delete('/api/protected/admin/users/:userId', async (c) => {
   }
 });
 
+async function recalculateRankings(db) {
+  // Recalculate Points, Accuracy, and Rankings for all users (excluding admin)
+  const { results: users } = await db.prepare("SELECT id FROM users WHERE is_admin = 0").all();
+
+  for (const u of users) {
+    const { results: completedPredictions } = await db.prepare(
+      `SELECT p.home_score as pred_home, p.away_score as pred_away, m.home_score as real_home, m.away_score as real_away 
+       FROM predictions p 
+       JOIN matches m ON p.match_id = m.id 
+       WHERE p.user_id = ? AND m.status = 'completed'`
+    ).bind(u.id).all();
+
+    let points = 0;
+    let correct = 0;
+    const total = completedPredictions.length;
+
+    for (const p of completedPredictions) {
+      const gained = getPointsAwarded(p.pred_home, p.pred_away, p.real_home, p.real_away);
+      points += gained;
+      if (gained > 0) {
+        correct += 1;
+      }
+    }
+
+    const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+    // Update user points and accuracy
+    await db.prepare("UPDATE users SET points = ?, accuracy = ? WHERE id = ?").bind(points, accuracy, u.id).run();
+  }
+
+  // Recalculate global_rank based on points DESC (excluding admin)
+  const { results: sortedUsers } = await db.prepare("SELECT id FROM users WHERE is_admin = 0 ORDER BY points DESC, name ASC").all();
+  for (let i = 0; i < sortedUsers.length; i++) {
+    const rank = i + 1;
+    await db.prepare("UPDATE users SET global_rank = ? WHERE id = ?").bind(rank, sortedUsers[i].id).run();
+  }
+}
+
 // 8. UPDATE MATCH AND RECALCULATE POINTS (Admin only)
 app.post('/api/protected/admin/matches/update', async (c) => {
   const userId = c.get('userId');
@@ -373,26 +411,32 @@ app.post('/api/protected/admin/matches/update', async (c) => {
       return c.json({ error: 'Acesso negado: Requer privilégios de administrador' }, 403);
     }
 
-    const homeScoreVal = homeScore !== null && homeScore !== undefined && homeScore !== '' ? parseInt(homeScore) : null;
-    const awayScoreVal = awayScore !== null && awayScore !== undefined && awayScore !== '' ? parseInt(awayScore) : null;
-    const homeTeamVal = homeTeam !== undefined && homeTeam !== '' ? homeTeam : null;
-    const homeAbbrevVal = homeAbbrev !== undefined && homeAbbrev !== '' ? homeAbbrev : null;
-    const homeFlagVal = homeFlag !== undefined && homeFlag !== '' ? homeFlag : null;
-    const awayTeamVal = awayTeam !== undefined && awayTeam !== '' ? awayTeam : null;
-    const awayAbbrevVal = awayAbbrev !== undefined && awayAbbrev !== '' ? awayAbbrev : null;
-    const awayFlagVal = awayFlag !== undefined && awayFlag !== '' ? awayFlag : null;
-    const statusVal = status !== undefined && status !== '' ? status : null;
-    const timeVal = time !== undefined && time !== '' ? time : null;
-    const startTimeVal = startTime !== undefined && startTime !== '' ? startTime : null;
+    // Get current match data
+    const m = await db.prepare('SELECT * FROM matches WHERE id = ?').bind(matchId).first();
+    if (!m) {
+      return c.json({ error: 'Partida não encontrada' }, 404);
+    }
 
-    // Update match info
+    const homeTeamVal = homeTeam !== undefined ? homeTeam : m.home_team;
+    const homeAbbrevVal = homeAbbrev !== undefined ? homeAbbrev : m.home_abbrev;
+    const homeFlagVal = homeFlag !== undefined ? homeFlag : m.home_flag;
+    const awayTeamVal = awayTeam !== undefined ? awayTeam : m.away_team;
+    const awayAbbrevVal = awayAbbrev !== undefined ? awayAbbrev : m.away_abbrev;
+    const awayFlagVal = awayFlag !== undefined ? awayFlag : m.away_flag;
+    
+    const homeScoreVal = homeScore !== undefined ? homeScore : m.home_score;
+    const awayScoreVal = awayScore !== undefined ? awayScore : m.away_score;
+    const statusVal = status !== undefined ? status : m.status;
+    const timeVal = time !== undefined ? time : m.time;
+    const startTimeVal = startTime !== undefined ? startTime : m.start_time;
+
     await db.prepare(
       `UPDATE matches SET 
         home_team = ?, home_abbrev = ?, home_flag = ?, 
         away_team = ?, away_abbrev = ?, away_flag = ?, 
-        home_score = ?, away_score = ?, status = ?,
-        time = ?, start_time = ?
-       WHERE id = ?`
+        home_score = ?, away_score = ?, status = ?, 
+        time = ?, start_time = ? 
+        WHERE id = ?`
     ).bind(
       homeTeamVal, homeAbbrevVal, homeFlagVal, 
       awayTeamVal, awayAbbrevVal, awayFlagVal, 
@@ -400,41 +444,8 @@ app.post('/api/protected/admin/matches/update', async (c) => {
       timeVal, startTimeVal, matchId
     ).run();
 
-    // Recalculate Points, Accuracy, and Rankings for all users (excluding admin)
-    const { results: users } = await db.prepare("SELECT id FROM users WHERE is_admin = 0").all();
-
-    for (const u of users) {
-      const { results: completedPredictions } = await db.prepare(
-        `SELECT p.home_score as pred_home, p.away_score as pred_away, m.home_score as real_home, m.away_score as real_away 
-         FROM predictions p 
-         JOIN matches m ON p.match_id = m.id 
-         WHERE p.user_id = ? AND m.status = 'completed'`
-      ).bind(u.id).all();
-
-      let points = 0;
-      let correct = 0;
-      const total = completedPredictions.length;
-
-      for (const p of completedPredictions) {
-        const gained = getPointsAwarded(p.pred_home, p.pred_away, p.real_home, p.real_away);
-        points += gained;
-        if (gained > 0) {
-          correct += 1;
-        }
-      }
-
-      const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
-
-      // Update user points and accuracy
-      await db.prepare("UPDATE users SET points = ?, accuracy = ? WHERE id = ?").bind(points, accuracy, u.id).run();
-    }
-
-    // Recalculate global_rank based on points DESC (excluding admin)
-    const { results: sortedUsers } = await db.prepare("SELECT id FROM users WHERE is_admin = 0 ORDER BY points DESC, name ASC").all();
-    for (let i = 0; i < sortedUsers.length; i++) {
-      const rank = i + 1;
-      await db.prepare("UPDATE users SET global_rank = ? WHERE id = ?").bind(rank, sortedUsers[i].id).run();
-    }
+    // Recalculate Points, Accuracy, and Rankings
+    await recalculateRankings(db);
 
     return c.json({ success: true });
   } catch (err) {
@@ -495,8 +506,14 @@ app.delete('/api/protected/admin/matches/:matchId', async (c) => {
       return c.json({ error: 'Acesso negado: Requer privilégios de administrador' }, 403);
     }
 
+    // Clean up predictions for this match first
+    await db.prepare('DELETE FROM predictions WHERE match_id = ?').bind(matchId).run();
+
     // Delete match
     await db.prepare('DELETE FROM matches WHERE id = ?').bind(matchId).run();
+
+    // Recalculate Points, Accuracy, and Rankings for everyone since a match is gone
+    await recalculateRankings(db);
 
     return c.json({ success: true });
   } catch (err) {

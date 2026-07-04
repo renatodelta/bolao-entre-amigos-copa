@@ -1267,16 +1267,50 @@ function renderLeaderboard(groupId = "global") {
   let rankingList = [];
   if (!isApiActive) {
     const db = loadMockUsersDB();
-    rankingList = db
+    const completedMatches = state.matches
+      .filter(m => m.status === "completed" && m.homeScore !== null && m.awayScore !== null)
+      .sort((a, b) => {
+        if (a.startTime && b.startTime) return a.startTime.localeCompare(b.startTime);
+        return a.id.localeCompare(b.id);
+      });
+
+    state.rankings.global = db
       .filter(user => user.is_admin !== 1)
-      .map(user => ({
-        id: user.id,
-        name: user.name,
-        avatar: user.avatar || "avatar.jpg",
-        points: user.points,
-        trend: user.id === "pedro_mock_id" ? "up" : "same",
-        isCurrentUser: user.id === state.user.id
-      }));
+      .map(user => {
+        const userPreds = loadMockPredictions(user.id);
+        let cumulativePoints = 0;
+        const history = [0];
+
+        completedMatches.forEach(match => {
+          const pred = userPreds[match.id];
+          if (pred) {
+            const pointsGained = getPointsAwarded(pred.homeScore, pred.awayScore, match.homeScore, match.awayScore);
+            cumulativePoints += pointsGained;
+          }
+          history.push(cumulativePoints);
+        });
+
+        return {
+          id: user.id,
+          name: user.name,
+          avatar: user.avatar || "avatar.jpg",
+          points: cumulativePoints,
+          pointsHistory: history,
+          trend: user.id === "pedro_mock_id" ? "up" : "same",
+          isCurrentUser: user.id === state.user?.id
+        };
+      });
+
+    // Sync mock DB points
+    state.rankings.global.forEach(ru => {
+      const uIdx = db.findIndex(u => u.id === ru.id);
+      if (uIdx !== -1) {
+        db[uIdx].points = ru.points;
+      }
+    });
+    saveMockUsersDB(db);
+
+    rankingList = [...state.rankings.global];
   } else {
     rankingList = [...(state.rankings.global || [])];
     const userRankItem = rankingList.find(item => item.isCurrentUser);

@@ -275,6 +275,47 @@ app.get('/api/protected/rankings/:groupId', async (c) => {
 
   try {
     const { results } = await db.prepare('SELECT name, points, accuracy, id, avatar FROM users WHERE is_admin = 0 ORDER BY points DESC LIMIT 100').all();
+
+    // 1. Get completed matches sorted chronologically
+    const { results: completedMatches } = await db.prepare(
+      "SELECT id, home_score, away_score FROM matches WHERE status = 'completed' AND home_score IS NOT NULL AND away_score IS NOT NULL ORDER BY start_time ASC, id ASC"
+    ).all();
+
+    // 2. Get predictions of users for completed matches
+    const { results: allPreds } = await db.prepare(`
+      SELECT p.user_id, p.match_id, p.home_score, p.away_score 
+      FROM predictions p
+      JOIN matches m ON p.match_id = m.id
+      WHERE m.status = 'completed' AND m.home_score IS NOT NULL AND m.away_score IS NOT NULL
+    `).all();
+
+    // Group predictions by user_id
+    const predsByUser = {};
+    allPreds.forEach(p => {
+      if (!predsByUser[p.user_id]) {
+        predsByUser[p.user_id] = {};
+      }
+      predsByUser[p.user_id][p.match_id] = { homeScore: p.home_score, awayScore: p.away_score };
+    });
+
+    // 3. Compute cumulative points history for each user
+    results.forEach(user => {
+      const userPreds = predsByUser[user.id] || {};
+      let cumulativePoints = 0;
+      const history = [0]; // J0 is 0 points
+
+      completedMatches.forEach(match => {
+        const pred = userPreds[match.id];
+        if (pred) {
+          const pointsGained = getPointsAwarded(pred.homeScore, pred.awayScore, match.home_score, match.away_score);
+          cumulativePoints += pointsGained;
+        }
+        history.push(cumulativePoints);
+      });
+
+      user.points_history = history;
+    });
+
     return c.json(results);
   } catch (err) {
     return c.json({ error: err.message }, 500);

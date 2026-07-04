@@ -442,6 +442,42 @@ app.post('/api/protected/admin/matches/update', async (c) => {
   }
 });
 
+// 8b. CREATE MATCH (Admin only)
+app.post('/api/protected/admin/matches/create', async (c) => {
+  const userId = c.get('userId');
+  const db = c.env?.DB;
+
+  if (!db) {
+    return c.json({ error: 'D1 not active' });
+  }
+
+  try {
+    // Verify user is admin
+    const caller = await db.prepare('SELECT is_admin FROM users WHERE id = ?').bind(userId).first();
+    if (!caller || caller.is_admin !== 1) {
+      return c.json({ error: 'Acesso negado: Requer privilégios de administrador' }, 403);
+    }
+
+    const { homeTeam, homeAbbrev, homeFlag, awayTeam, awayAbbrev, awayFlag, status, time, startTime } = await c.req.json();
+
+    if (!homeTeam || !awayTeam || !time || !startTime) {
+      return c.json({ error: 'Preencha todos os campos obrigatórios' }, 400);
+    }
+
+    const matchId = 'm_' + Date.now();
+
+    await db.prepare(
+      "INSERT INTO matches (id, home_team, home_abbrev, home_flag, away_team, away_abbrev, away_flag, status, time, start_time, home_score, away_score, email_sent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, 0)"
+    ).bind(
+      matchId, homeTeam, homeAbbrev, homeFlag, awayTeam, awayAbbrev, awayFlag, status || 'upcoming', time, startTime
+    ).run();
+
+    return c.json({ success: true, matchId });
+  } catch (err) {
+    return c.json({ error: err.message }, 500);
+  }
+});
+
 // 9. DELETE MATCH (Admin only)
 app.delete('/api/protected/admin/matches/:matchId', async (c) => {
   const userId = c.get('userId');

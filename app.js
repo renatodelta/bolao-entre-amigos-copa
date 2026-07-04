@@ -767,30 +767,40 @@ async function saveAdminMatchInline(matchId, homeScore, awayScore, status) {
 
 let currentEditingAdminMatchId = null;
 
-function openAdminMatchModal(matchId) {
-  const m = state.matches.find(item => item.id === matchId);
-  if (!m) return;
-
+function openAdminMatchModal(matchId = null) {
   currentEditingAdminMatchId = matchId;
 
+  const modalTitle = document.querySelector("#admin-match-modal .modal-header h4");
   const homeSelect = document.getElementById("admin-home-select");
   const awaySelect = document.getElementById("admin-away-select");
 
-  setSelectedValue(homeSelect, m.homeTeam, m.homeAbbrev, m.homeFlag);
-  setSelectedValue(awaySelect, m.awayTeam, m.awayAbbrev, m.awayFlag);
+  if (matchId) {
+    if (modalTitle) modalTitle.textContent = "Editar Partida (Admin)";
+    const m = state.matches.find(item => item.id === matchId);
+    if (!m) return;
 
-  document.getElementById("admin-home-score").value = m.homeScore !== null ? m.homeScore : "";
-  document.getElementById("admin-away-score").value = m.awayScore !== null ? m.awayScore : "";
+    setSelectedValue(homeSelect, m.homeTeam, m.homeAbbrev, m.homeFlag);
+    setSelectedValue(awaySelect, m.awayTeam, m.awayAbbrev, m.awayFlag);
 
-  document.getElementById("admin-status-select").value = m.status;
-
-  // Load Date/Time Fields
-  document.getElementById("admin-time-input").value = m.time || "";
-  let rawStartTime = m.startTime || "";
-  if (rawStartTime) {
-    rawStartTime = rawStartTime.replace(" ", "T").substring(0, 16);
+    document.getElementById("admin-home-score").value = m.homeScore !== null ? m.homeScore : "";
+    document.getElementById("admin-away-score").value = m.awayScore !== null ? m.awayScore : "";
+    document.getElementById("admin-status-select").value = m.status;
+    document.getElementById("admin-time-input").value = m.time || "";
+    let rawStartTime = m.startTime || "";
+    if (rawStartTime) {
+      rawStartTime = rawStartTime.replace(" ", "T").substring(0, 16);
+    }
+    document.getElementById("admin-start-time-input").value = rawStartTime;
+  } else {
+    if (modalTitle) modalTitle.textContent = "Criar Partida (Admin)";
+    homeSelect.selectedIndex = 0;
+    awaySelect.selectedIndex = 0;
+    document.getElementById("admin-home-score").value = "";
+    document.getElementById("admin-away-score").value = "";
+    document.getElementById("admin-status-select").value = "upcoming";
+    document.getElementById("admin-time-input").value = "";
+    document.getElementById("admin-start-time-input").value = "";
   }
-  document.getElementById("admin-start-time-input").value = rawStartTime;
 
   adminMatchModal.classList.add("open");
 }
@@ -839,34 +849,72 @@ async function saveAdminMatchDetails() {
 
   try {
     if (isApiActive) {
-      await apiRequest("/api/protected/admin/matches/update", "POST", {
-        matchId: currentEditingAdminMatchId,
-        homeTeam: homeTeam || null,
-        homeAbbrev: homeAbbrev || null,
-        homeFlag: homeFlag || null,
-        awayTeam: awayTeam || null,
-        awayAbbrev: awayAbbrev || null,
-        awayFlag: awayFlag || null,
-        homeScore: homeScore !== undefined ? homeScore : null,
-        awayScore: awayScore !== undefined ? awayScore : null,
-        status: status || null,
-        time: time || null,
-        startTime: startTime || null
-      });
+      if (currentEditingAdminMatchId) {
+        // Edit existing match
+        await apiRequest("/api/protected/admin/matches/update", "POST", {
+          matchId: currentEditingAdminMatchId,
+          homeTeam: homeTeam || null,
+          homeAbbrev: homeAbbrev || null,
+          homeFlag: homeFlag || null,
+          awayTeam: awayTeam || null,
+          awayAbbrev: awayAbbrev || null,
+          awayFlag: awayFlag || null,
+          homeScore: homeScore !== undefined ? homeScore : null,
+          awayScore: awayScore !== undefined ? awayScore : null,
+          status: status || null,
+          time: time || null,
+          startTime: startTime || null
+        });
+      } else {
+        // Create new match
+        await apiRequest("/api/protected/admin/matches/create", "POST", {
+          homeTeam,
+          homeAbbrev,
+          homeFlag,
+          awayTeam,
+          awayAbbrev,
+          awayFlag,
+          status,
+          time,
+          startTime
+        });
+      }
     } else {
-      const mIdx = state.matches.findIndex(m => m.id === currentEditingAdminMatchId);
-      if (mIdx !== -1) {
-        state.matches[mIdx].homeTeam = homeTeam;
-        state.matches[mIdx].homeAbbrev = homeAbbrev;
-        state.matches[mIdx].homeFlag = homeFlag;
-        state.matches[mIdx].awayTeam = awayTeam;
-        state.matches[mIdx].awayAbbrev = awayAbbrev;
-        state.matches[mIdx].awayFlag = awayFlag;
-        state.matches[mIdx].homeScore = homeScore;
-        state.matches[mIdx].awayScore = awayScore;
-        state.matches[mIdx].status = status;
-        state.matches[mIdx].time = time;
-        state.matches[mIdx].startTime = startTime;
+      if (currentEditingAdminMatchId) {
+        const mIdx = state.matches.findIndex(m => m.id === currentEditingAdminMatchId);
+        if (mIdx !== -1) {
+          state.matches[mIdx].homeTeam = homeTeam;
+          state.matches[mIdx].homeAbbrev = homeAbbrev;
+          state.matches[mIdx].homeFlag = homeFlag;
+          state.matches[mIdx].awayTeam = awayTeam;
+          state.matches[mIdx].awayAbbrev = awayAbbrev;
+          state.matches[mIdx].awayFlag = awayFlag;
+          state.matches[mIdx].homeScore = homeScore;
+          state.matches[mIdx].awayScore = awayScore;
+          state.matches[mIdx].status = status;
+          state.matches[mIdx].time = time;
+          state.matches[mIdx].startTime = startTime;
+        }
+      } else {
+        // Mock Mode creation
+        const newMatchId = 'm_' + Date.now();
+        const newMatch = {
+          id: newMatchId,
+          homeTeam,
+          homeAbbrev,
+          homeFlag,
+          awayTeam,
+          awayAbbrev,
+          awayFlag,
+          status,
+          time,
+          startTime,
+          homeScore: null,
+          awayScore: null,
+          realTimeMinute: null,
+          resultCalculated: false
+        };
+        state.matches.push(newMatch);
       }
 
       if (status === "completed") {
@@ -907,7 +955,7 @@ async function saveAdminMatchDetails() {
 
     closeAllModals();
     adminMatchModal.classList.remove("open");
-    showToast("Partida atualizada com sucesso!", "success");
+    showToast(currentEditingAdminMatchId ? "Partida atualizada com sucesso!" : "Partida criada com sucesso!", "success");
     initAppContent(); // Refresh UI in the background
   } catch (err) {
     showToast("Erro ao salvar partida: " + err.message, "danger");
@@ -1127,9 +1175,7 @@ function renderRankingChart() {
   if (completedMatches.length === 0) return;
 
   const n = completedMatches.length;
-  const labels = ["Início", ...completedMatches.map((m, i) =>
-    `J${i + 1} ${m.homeAbbrev}×${m.awayAbbrev}`
-  )];
+  const labels = ["Início", ...completedMatches.map((m, i) => `J${i + 1}`)];
 
   const colors = ["#3b82f6", "#10b981", "#ec4899", "#a855f7", "#06b6d4", "#f59e0b", "#ef4444"];
   const datasets = [];
@@ -1795,6 +1841,10 @@ function initEventListeners() {
     document.getElementById("admin-users-tab-content").style.display = "none";
     document.getElementById("admin-matches-tab-content").style.display = "block";
     loadAdminMatches();
+  });
+
+  document.getElementById("admin-create-match-btn").addEventListener("click", () => {
+    openAdminMatchModal(null);
   });
 
   // Admin Match Edit Modal listeners

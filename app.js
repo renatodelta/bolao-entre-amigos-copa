@@ -980,7 +980,6 @@ async function deleteAdminMatch(matchId) {
       saveState();
     }
 
-    showToast("Partida excluída com sucesso!", "success");
     initAppContent(); // Refresh UI in the background
   } catch (err) {
     showToast("Erro ao excluir partida: " + err.message, "danger");
